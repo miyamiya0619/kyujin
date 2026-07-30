@@ -1,0 +1,12 @@
+標準テーマ。
+
+コア(resources/views/core/)をそのまま使うため、Blade ファイルは 1 つも置いていない。
+見た目を変えたいときだけ、コアと同じパスのファイルをこのディレクトリに置く。
+
+  例) トップページだけ変えたい
+      resources/views/themes/default/public/top.blade.php
+
+CSS と画像は public/themes/default/ に置く。
+テーマの CSS はビルド不要の素の CSS にしてある。
+本番のエックスサーバーに Node.js が無いため、テーマだけを差し替えるときに
+ビルド環境を用意せずに済むほうが運用しやすいという判断(SPEC.md 9章)。

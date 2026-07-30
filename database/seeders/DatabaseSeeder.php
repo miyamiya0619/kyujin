@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            // このメディアの設定(1行のみ)。既にあれば何もしない。
+            SiteSettingSeeder::class,
+
             // 市区町村は都道府県を参照するため、必ず都道府県のあとに実行する。
             PrefectureSeeder::class,
             CitySeeder::class,

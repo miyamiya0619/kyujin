@@ -1,0 +1,17 @@
+/*
+ * 標準テーマの CSS。
+ *
+ * 共通の Tailwind は resources/css/app.css 側でビルドされる。
+ * このファイルはテーマ固有の上書きだけを書く。ビルド不要の素の CSS。
+ *
+ * 顧客ごとにデザインを個別制作する場合は
+ * public/themes/{テーマ名}/css/theme.css を用意する。
+ */
+
+:root {
+    --theme-color-fallback: #2563eb;
+}
+
+a {
+    color: var(--theme-color, var(--theme-color-fallback));
+}
