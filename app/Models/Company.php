@@ -31,6 +31,11 @@ class Company extends Model
         return $this->hasMany(CompanyUser::class);
     }
 
+    public function workplaces(): HasMany
+    {
+        return $this->hasMany(Workplace::class);
+    }
+
     public function prefecture(): BelongsTo
     {
         return $this->belongsTo(Prefecture::class);

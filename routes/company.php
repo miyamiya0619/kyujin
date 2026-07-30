@@ -4,6 +4,7 @@ use App\Http\Controllers\Company\Auth\LoginController;
 use App\Http\Controllers\Company\Auth\PasswordResetController;
 use App\Http\Controllers\Company\DashboardController;
 use App\Http\Controllers\Company\ProfileController;
+use App\Http\Controllers\Company\WorkplaceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,4 +35,7 @@ Route::middleware('auth:company')->group(function () {
     // ID を受け取らないことで他社を覗く余地を構造的に無くしている。
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // 事業所の管理。**URL に企業 ID を含めない**(CLAUDE.md 3.8)。
+    Route::resource('workplaces', WorkplaceController::class)->except(['show']);
 });

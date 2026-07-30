@@ -12,8 +12,12 @@
             <x-company-status-badge :status="$company->status" />
         </div>
 
-        <a href="{{ route('admin.companies.edit', $company) }}"
-           class="rounded border border-gray-300 bg-white px-4 py-2 text-sm">企業情報を編集</a>
+        <div class="flex gap-3">
+            <a href="{{ route('admin.companies.workplaces.index', $company) }}"
+               class="rounded border border-gray-300 bg-white px-4 py-2 text-sm">事業所を管理</a>
+            <a href="{{ route('admin.companies.edit', $company) }}"
+               class="rounded border border-gray-300 bg-white px-4 py-2 text-sm">企業情報を編集</a>
+        </div>
     </div>
 
     <div class="mt-6 grid gap-6 lg:grid-cols-3">

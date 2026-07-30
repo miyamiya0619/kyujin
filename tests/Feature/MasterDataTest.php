@@ -28,8 +28,9 @@ class MasterDataTest extends TestCase
         $this->assertSame(6, EmploymentType::count(), '雇用形態は 6 件');
         $this->assertSame(20, JobFeature::count(), 'こだわり条件は 20 件');
 
-        // 市区町村は主要 74 件のみ。全件は masters:import-cities で取り込む
-        $this->assertSame(74, City::count(), '主要市区町村は 74 件');
+        // 全国の市区町村。database/data/cities.php を製品に同梱しているため、
+        // 顧客環境でも deploy 時の db:seed だけで全件入る。
+        $this->assertSame(1747, City::count(), '全国の市区町村は 1,747 件');
     }
 
     public function test_介護領域の主要マスタが漏れなく入っている(): void
@@ -105,7 +106,7 @@ class MasterDataTest extends TestCase
 
         $this->assertSame($before, Qualification::count());
         $this->assertSame(47, Prefecture::count());
-        $this->assertSame(74, City::count());
+        $this->assertSame(1747, City::count());
     }
 
     public function test_シーダーを再実行しても顧客が調整した設定が消えない(): void
@@ -160,6 +161,14 @@ class MasterDataTest extends TestCase
 
         $tokyo = Prefecture::where('code', '13')->firstOrFail();
 
-        $this->assertSame(23, $tokyo->cities()->count(), '東京都は 23 区が入っている');
+        // 23 特別区 + 市町村(八王子市・町田市など)
+        $this->assertSame(62, $tokyo->cities()->count(), '東京都は 62 市区町村');
+
+        // 政令指定都市の行政区(札幌市中央区など)は公式データに含まれない
+        $this->assertFalse(City::where('name', '札幌市中央区')->exists());
+        $this->assertTrue(City::where('name', '札幌市')->exists());
+
+        // 町村まで入っていること(介護事業所は町村にも多い)
+        $this->assertTrue(City::where('name', '与那国町')->exists());
     }
 }

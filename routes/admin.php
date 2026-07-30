@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Auth\PasswordResetController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\CompanyUserController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\WorkplaceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,4 +42,9 @@ Route::middleware('auth:admin')->group(function () {
         ->name('companies.users.resend');
     Route::post('companies/{company}/users/{user}/toggle', [CompanyUserController::class, 'toggle'])
         ->name('companies.users.toggle');
+
+    // 事業所の代行編集。運営者は立ち上げ期に掲載企業に代わって登録する(SPEC.md 11.6)。
+    // shallow にしない: edit/update/destroy でも {company} を残し、
+    // ManagesWorkplaces トレイトが常に対象企業を受け取れるようにする。
+    Route::resource('companies.workplaces', WorkplaceController::class)->except(['show']);
 });

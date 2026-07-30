@@ -106,6 +106,9 @@
 バージョンアップのたびに全環境でシーダーを再実行する。ここを守らないと**更新のたびに全顧客の設定が吹き飛ぶ**。
 新しいマスタシーダーは必ず `Database\Seeders\MasterSeeder` を継承し、`sync()` を使うこと。自分で `updateOrCreate` を書かない。
 
+`sync()` は 1 行ずつ `firstOrNew` + `save` せず、**既存行を 1 回で読み、新規はまとめて `insert`、更新は差分があるものだけ**にする一括処理になっている。
+市区町村(1,747件)のように件数が多いマスタで 1 行ずつ処理すると、本番(共有レンタルサーバー)の実行時間上限に達して deploy が途中で止まる。
+
 また、**選択肢を組み立てるときは必ず `selectable()` を通す**(= `enabled()` + `ordered()`)。
 `Model::all()` や `pluck()` を直接使うと、顧客が無効化したマスタが選択肢に出てしまう。
 
@@ -126,7 +129,24 @@ Route::get('companies/{company}/profile', ...);
 **必ず自社に属することを確認し、違えば 404 を返す**(403 ではない。存在を知らせないため)。
 そのテストを書いていない機能は未完成として扱う(→ 7.2)。
 
-### 3.9 画像の保存は ImageUploadService を通す
+### 3.9 複数のルートモデルバインディングを 1 メソッドで受けるときは引数順を URL 順に揃える
+
+同じコントローラを複数のルート形状(例: `{company}/workplaces/{workplace}` と `workplaces/{workplace}` のみ)で共有する場合、**公開アクション(index/edit など)の引数順は URL のパラメータ順と一致させる。**
+
+Laravel の暗黙のルートモデルバインディングは、型が一致する引数がある場合に**ルートパラメータの URL 登録順**で位置合わせしてメソッドへ渡す。名前ではなく型と位置で解決されるため、
+
+```php
+// URL: companies/{company}/workplaces/{workplace}
+// ダメ: 引数順が URL と逆。実行時に TypeError になる
+public function edit(Workplace $workplace, ?Company $company) { ... }
+
+// 良い: URL の並び(company → workplace)に揃える
+public function edit(Company $company, Workplace $workplace) { ... }
+```
+
+複数コントローラで CRUD ロジックを共有したい場合は、**公開アクションは各コントローラで route の並びに合わせて定義し**、実処理だけをトレイトの `protected` メソッド(`do*` など、固定の引数順でよい)に委譲する。トレイト側に公開アクションを直接置かない。
+
+### 3.10 画像の保存は ImageUploadService を通す
 
 - 保存先は `uploads` ディスク(`public/uploads`)。**`public` ディスクを使わない。**
   `storage:link` のシンボリックリンクに依存し、本番で使えないと画像が全て表示されなくなる
@@ -134,7 +154,7 @@ Route::get('companies/{company}/profile', ...);
 - WebP に変換し長辺を縮小する。**GD の WebP 対応は環境依存**なので、
   新しい環境では `ImageUploadService::supportsWebp()` を必ず確認する
 
-### 3.10 テナント分離のコードを書かない
+### 3.11 テナント分離のコードを書かない
 
 前身のプロジェクトと違い、**この製品にテナントの概念はない**。環境が物理的に分かれているため、`tenant_id` カラム・Global Scope・`BelongsToTenant` トレイトは**作らない**。
 

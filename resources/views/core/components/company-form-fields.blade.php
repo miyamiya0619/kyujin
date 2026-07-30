@@ -52,6 +52,8 @@
         <x-form.textarea name="description" :value="$company->description" :rows="6" />
     </x-form.field>
 
+    <x-prefecture-city-select-script />
+
     <x-form.field name="logo" label="ロゴ画像" help="JPEG・PNG・WebP、5MB まで。アップロード時に自動で WebP に変換されます。">
         @if ($company->logo_path)
             <img src="{{ \App\Services\ImageUploadService::url($company->logo_path) }}"

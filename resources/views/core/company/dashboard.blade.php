@@ -14,6 +14,12 @@
             <p class="font-semibold">企業情報</p>
             <p class="mt-1 text-sm text-gray-600">求人ページに表示される自社の紹介</p>
         </a>
+
+        <a href="{{ route('company.workplaces.index') }}"
+           class="rounded border border-gray-200 bg-white p-5 hover:border-gray-400">
+            <p class="font-semibold">事業所</p>
+            <p class="mt-1 text-sm text-gray-600">特養・デイサービスなどの拠点情報</p>
+        </a>
     </div>
 
     <p class="mt-6 text-sm text-gray-500">
