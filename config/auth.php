@@ -1,117 +1,94 @@
 <?php
 
-use App\Models\User;
+use App\Models\AdminUser;
+use App\Models\CompanyUser;
+use App\Models\JobSeeker;
+
+/*
+|--------------------------------------------------------------------------
+| 認証の構成
+|--------------------------------------------------------------------------
+| この製品には 3 種類のユーザーがいて、それぞれ完全に独立したログインを持つ。
+|
+|   admin   運営者(メディア運営者 = 顧客のスタッフ)   /admin/login
+|   company 掲載企業の担当者                          /company/login
+|   seeker  求職者                                    /login(公開サイト内)
+|
+| ガード名が違えばセッションのキーも分かれるため、同じブラウザで
+| 3 つ同時にログインできる。運営者が動作確認するときに便利。
+|
+| ⚠ ミドルウェアでは必ずガードを明示すること(auth:admin / auth:company / auth:seeker)。
+|   無指定にすると既定ガード(seeker)が使われ、権限の穴になる。
+|
+| パスワード再設定のトークンはユーザー種別ごとに別テーブルにしている。
+| 同じメールアドレスを持つ運営者と求職者が互いのトークンを上書きしないようにするため。
+*/
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Defaults
-    |--------------------------------------------------------------------------
-    |
-    | This option defines the default authentication "guard" and password
-    | reset "broker" for your application. You may change these values
-    | as required, but they're a perfect start for most applications.
-    |
-    */
-
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+        // 公開サイトが最も多く使われるため求職者を既定にする。
+        'guard' => 'seeker',
+        'passwords' => 'seekers',
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Guards
-    |--------------------------------------------------------------------------
-    |
-    | Next, you may define every authentication guard for your application.
-    | Of course, a great default configuration has been defined for you
-    | which utilizes session storage plus the Eloquent user provider.
-    |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
-    |
-    | Supported: "session"
-    |
-    */
 
     'guards' => [
-        'web' => [
+        'admin' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'admin_users',
+        ],
+
+        'company' => [
+            'driver' => 'session',
+            'provider' => 'company_users',
+        ],
+
+        'seeker' => [
+            'driver' => 'session',
+            'provider' => 'job_seekers',
         ],
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | User Providers
-    |--------------------------------------------------------------------------
-    |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
-    |
-    | If you have multiple user tables or models you may configure multiple
-    | providers to represent the model / table. These providers may then
-    | be assigned to any extra authentication guards you have defined.
-    |
-    | Supported: "database", "eloquent"
-    |
-    */
 
     'providers' => [
-        'users' => [
+        'admin_users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
+            'model' => AdminUser::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'company_users' => [
+            'driver' => 'eloquent',
+            'model' => CompanyUser::class,
+        ],
+
+        'job_seekers' => [
+            'driver' => 'eloquent',
+            'model' => JobSeeker::class,
+        ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Resetting Passwords
-    |--------------------------------------------------------------------------
-    |
-    | These configuration options specify the behavior of Laravel's password
-    | reset functionality, including the table utilized for token storage
-    | and the user provider that is invoked to actually retrieve users.
-    |
-    | The expiry time is the number of minutes that each reset token will be
-    | considered valid. This security feature keeps tokens short-lived so
-    | they have less time to be guessed. You may change this as needed.
-    |
-    | The throttle setting is the number of seconds a user must wait before
-    | generating more password reset tokens. This prevents the user from
-    | quickly generating a very large amount of password reset tokens.
-    |
-    */
-
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+        'admins' => [
+            'provider' => 'admin_users',
+            'table' => 'admin_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'companies' => [
+            'provider' => 'company_users',
+            'table' => 'company_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'seekers' => [
+            'provider' => 'job_seekers',
+            'table' => 'job_seeker_password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Password Confirmation Timeout
-    |--------------------------------------------------------------------------
-    |
-    | Here you may define the number of seconds before a password confirmation
-    | window expires and users are asked to re-enter their password via the
-    | confirmation screen. By default, the timeout lasts for three hours.
-    |
-    */
-
-    'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
+    'password_timeout' => 10800,
 
 ];
