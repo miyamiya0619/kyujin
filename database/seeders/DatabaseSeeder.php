@@ -2,24 +2,34 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+/**
+ * 全マスタを投入する。
+ *
+ * **デプロイのたびに実行してよい。** 各マスタシーダーは `code` で既存行を特定するため、
+ * 何度実行しても重複せず、顧客が調整した並び順・有効無効も消えない(MasterSeeder を参照)。
+ *
+ *     php artisan db:seed
+ */
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            // 市区町村は都道府県を参照するため、必ず都道府県のあとに実行する。
+            PrefectureSeeder::class,
+            CitySeeder::class,
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            // 介護・医療・福祉の特化マスタ
+            QualificationSeeder::class,
+            FacilityTypeSeeder::class,
+            JobCategorySeeder::class,
+            EmploymentTypeSeeder::class,
+            JobFeatureSeeder::class,
         ]);
     }
 }
