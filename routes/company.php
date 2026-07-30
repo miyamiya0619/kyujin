@@ -44,4 +44,6 @@ Route::middleware('auth:company')->group(function () {
     Route::resource('job-postings', JobPostingController::class)->except(['show']);
     Route::post('job-postings/{job_posting}/duplicate', [JobPostingController::class, 'duplicate'])
         ->name('job-postings.duplicate');
+    Route::post('job-postings/{job_posting}/submit', [JobPostingController::class, 'submit'])
+        ->name('job-postings.submit');
 });

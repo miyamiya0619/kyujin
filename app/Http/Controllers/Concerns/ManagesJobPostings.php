@@ -9,9 +9,11 @@ use App\Models\JobCategory;
 use App\Models\JobFeature;
 use App\Models\JobPosting;
 use App\Models\Qualification;
+use App\Services\SubmitJobPostingForReviewService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -42,7 +44,7 @@ trait ManagesJobPostings
         return view("{$this->viewPrefix()}.index", [
             'company' => $company,
             'jobPostings' => $company->jobPostings()
-                ->with('workplace', 'jobCategory', 'employmentType')
+                ->with('workplace', 'jobCategory', 'employmentType', 'reviews')
                 ->orderByDesc('id')
                 ->get(),
         ]);
@@ -159,6 +161,30 @@ trait ManagesJobPostings
         });
 
         return redirect($this->redirectRoute($company))->with('status', "「{$jobPosting->title}」を複製しました。内容を確認して公開申請してください。");
+    }
+
+    /**
+     * 求人を審査に提出する。下書き・差戻しの状態からのみ提出できる。
+     * サイト設定で審査が OFF の場合は即座に公開される(SubmitJobPostingForReviewService)。
+     */
+    protected function doSubmit(?Company $routeCompany, JobPosting $jobPosting): RedirectResponse
+    {
+        $company = $this->targetCompany($routeCompany);
+        $this->ensureBelongsTo($company, $jobPosting);
+
+        if (! in_array($jobPosting->status, [JobPosting::STATUS_DRAFT, JobPosting::STATUS_REJECTED], true)) {
+            throw ValidationException::withMessages([
+                'status' => 'この求人は提出できる状態ではありません。',
+            ]);
+        }
+
+        app(SubmitJobPostingForReviewService::class)->submit($jobPosting);
+
+        $message = $jobPosting->fresh()->isPublished()
+            ? "「{$jobPosting->title}」を公開しました。"
+            : "「{$jobPosting->title}」を審査に提出しました。";
+
+        return redirect($this->redirectRoute($company))->with('status', $message);
     }
 
     /**

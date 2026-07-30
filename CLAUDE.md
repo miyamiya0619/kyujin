@@ -154,7 +154,19 @@ public function edit(Company $company, Workplace $workplace) { ... }
 - WebP に変換し長辺を縮小する。**GD の WebP 対応は環境依存**なので、
   新しい環境では `ImageUploadService::supportsWebp()` を必ず確認する
 
-### 3.11 テナント分離のコードを書かない
+### 3.11 `create([])` の直後は DB のデフォルト値をモデルが持っていない
+
+Eloquent の `create([])` は、渡さなかったカラムを DB 側のデフォルト値(マイグレーションの `default(...)`)で INSERT させるが、**そのデフォルト値を作成後のモデルインスタンスに反映しない。** `$model->column` は `null` のままになる。
+
+```php
+// マイグレーションで requires_review は default(true)
+$setting = SiteSetting::query()->create([]);
+$setting->requires_review; // null(true ではない)— DB には正しく 1 が入っている
+```
+
+**行が存在しない場合に `create([])` で作る処理を書いたら、直後に `->refresh()` するか、明示的にデフォルト値を渡すこと。** 実際にこれが原因で `SiteSetting::current()->requires_review` が `null`(falsy)と評価され、審査 OFF の分岐に誤って入る不具合が起きた(`app/Models/SiteSetting.php` の `current()` を参照)。
+
+### 3.12 テナント分離のコードを書かない
 
 前身のプロジェクトと違い、**この製品にテナントの概念はない**。環境が物理的に分かれているため、`tenant_id` カラム・Global Scope・`BelongsToTenant` トレイトは**作らない**。
 

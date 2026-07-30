@@ -54,6 +54,11 @@ class JobPostingController extends Controller
         return $this->doDuplicate(null, $jobPosting);
     }
 
+    public function submit(JobPosting $jobPosting): RedirectResponse
+    {
+        return $this->doSubmit(null, $jobPosting);
+    }
+
     protected function targetCompany(?Company $routeCompany = null): Company
     {
         return auth('company')->user()->company;

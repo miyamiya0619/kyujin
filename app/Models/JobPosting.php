@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * 求人。審査フロー(T-08)を経て公開される。
@@ -88,6 +89,21 @@ class JobPosting extends Model
     public function features(): BelongsToMany
     {
         return $this->belongsToMany(JobFeature::class, 'job_posting_feature');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(JobPostingReview::class)->latest('id');
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === self::STATUS_PENDING;
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->status === self::STATUS_REJECTED;
     }
 
     /**

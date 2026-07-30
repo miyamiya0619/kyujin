@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\CompanyUserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\JobPostingController;
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\WorkplaceController;
 use Illuminate\Support\Facades\Route;
 
@@ -53,4 +54,13 @@ Route::middleware('auth:admin')->group(function () {
     Route::resource('companies.job-postings', JobPostingController::class)->except(['show']);
     Route::post('companies/{company}/job-postings/{job_posting}/duplicate', [JobPostingController::class, 'duplicate'])
         ->name('companies.job-postings.duplicate');
+    Route::post('companies/{company}/job-postings/{job_posting}/submit', [JobPostingController::class, 'submit'])
+        ->name('companies.job-postings.submit');
+
+    // 審査待ち一覧と審査アクション。運営者の日常業務の中心(SPEC.md 7章)。
+    Route::get('reviews', [ReviewController::class, 'index'])->name('reviews.index');
+    Route::post('job-postings/{job_posting}/approve', [ReviewController::class, 'approve'])
+        ->name('job-postings.approve');
+    Route::post('job-postings/{job_posting}/reject', [ReviewController::class, 'reject'])
+        ->name('job-postings.reject');
 });

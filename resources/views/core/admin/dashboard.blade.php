@@ -9,6 +9,12 @@
     <h1 class="text-xl font-bold">ダッシュボード</h1>
 
     <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="{{ route('admin.reviews.index') }}"
+           class="rounded border border-gray-200 bg-white p-5 hover:border-gray-400">
+            <p class="font-semibold">審査待ち</p>
+            <p class="mt-1 text-2xl font-bold" style="color: var(--theme-color)">{{ $pendingCount }} 件</p>
+        </a>
+
         <a href="{{ route('admin.companies.index') }}"
            class="rounded border border-gray-200 bg-white p-5 hover:border-gray-400">
             <p class="font-semibold">掲載企業</p>
@@ -17,6 +23,6 @@
     </div>
 
     <p class="mt-6 text-sm text-gray-500">
-        審査待ち件数・掲載中求人数・応募数・媒体別流入は T-16 で実装します。
+        掲載中求人数・応募数・媒体別流入は T-16 で実装します。
     </p>
 @endsection

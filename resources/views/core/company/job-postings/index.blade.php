@@ -29,11 +29,24 @@
             <tbody class="divide-y divide-gray-100">
                 @forelse ($jobPostings as $jobPosting)
                     <tr>
-                        <td class="px-4 py-3 font-medium">{{ $jobPosting->title }}</td>
+                        <td class="px-4 py-3 font-medium">
+                            {{ $jobPosting->title }}
+                            @if ($jobPosting->status === 'rejected' && $jobPosting->reviews->first())
+                                <p class="mt-1 text-xs text-red-600">差戻し理由: {{ $jobPosting->reviews->first()->comment }}</p>
+                            @endif
+                        </td>
                         <td class="px-4 py-3 text-gray-600">{{ $jobPosting->workplace->name }}</td>
                         <td class="px-4 py-3"><x-job-posting-status-badge :status="$jobPosting->status" /></td>
                         <td class="px-4 py-3 text-right">
                             <div class="flex justify-end gap-3">
+                                @if (in_array($jobPosting->status, ['draft', 'rejected']))
+                                    <form method="POST" action="{{ route('company.job-postings.submit', $jobPosting) }}">
+                                        @csrf
+                                        <button type="submit" class="font-medium hover:underline" style="color: var(--theme-color)">
+                                            審査に提出
+                                        </button>
+                                    </form>
+                                @endif
                                 <a href="{{ route('company.job-postings.edit', $jobPosting) }}"
                                    class="text-gray-600 hover:underline">編集</a>
                                 <form method="POST" action="{{ route('company.job-postings.duplicate', $jobPosting) }}">
