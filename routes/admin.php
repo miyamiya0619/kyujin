@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Auth\PasswordResetController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\CompanyUserController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\JobPostingController;
 use App\Http\Controllers\Admin\WorkplaceController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,4 +48,9 @@ Route::middleware('auth:admin')->group(function () {
     // shallow にしない: edit/update/destroy でも {company} を残し、
     // ManagesWorkplaces トレイトが常に対象企業を受け取れるようにする。
     Route::resource('companies.workplaces', WorkplaceController::class)->except(['show']);
+
+    // 求人の代行入稿。shallow にしない理由は事業所と同じ(CLAUDE.md 3.9)。
+    Route::resource('companies.job-postings', JobPostingController::class)->except(['show']);
+    Route::post('companies/{company}/job-postings/{job_posting}/duplicate', [JobPostingController::class, 'duplicate'])
+        ->name('companies.job-postings.duplicate');
 });

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Company\Auth\LoginController;
 use App\Http\Controllers\Company\Auth\PasswordResetController;
 use App\Http\Controllers\Company\DashboardController;
+use App\Http\Controllers\Company\JobPostingController;
 use App\Http\Controllers\Company\ProfileController;
 use App\Http\Controllers\Company\WorkplaceController;
 use Illuminate\Support\Facades\Route;
@@ -38,4 +39,9 @@ Route::middleware('auth:company')->group(function () {
 
     // 事業所の管理。**URL に企業 ID を含めない**(CLAUDE.md 3.8)。
     Route::resource('workplaces', WorkplaceController::class)->except(['show']);
+
+    // 求人のセルフ入稿。**URL に企業 ID を含めない**(CLAUDE.md 3.8)。
+    Route::resource('job-postings', JobPostingController::class)->except(['show']);
+    Route::post('job-postings/{job_posting}/duplicate', [JobPostingController::class, 'duplicate'])
+        ->name('job-postings.duplicate');
 });

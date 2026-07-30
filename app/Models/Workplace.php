@@ -6,8 +6,7 @@ use App\Services\ImageUploadService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * 事業所・勤務地。掲載企業が持つ拠点(特養・デイサービスなどの単位)。
@@ -43,6 +42,11 @@ class Workplace extends Model
         return $this->belongsTo(City::class);
     }
 
+    public function jobPostings(): HasMany
+    {
+        return $this->hasMany(JobPosting::class);
+    }
+
     /** 一覧表示用の所在地(都道府県+市区町村)。 */
     public function locationLabel(): ?string
     {
@@ -58,16 +62,9 @@ class Workplace extends Model
         return ImageUploadService::url($this->photo_path);
     }
 
-    /**
-     * この事業所に求人が紐づいているか。削除の可否判定に使う。
-     *
-     * job_postings テーブルは T-07 で作る。それまでは常に false を返し、
-     * 削除を妨げない。T-07 で実装したら、この暫定実装を
-     * `$this->jobPostings()->exists()` のような通常のリレーション判定に置き換えること。
-     */
+    /** この事業所に求人が紐づいているか。削除の可否判定に使う。 */
     public function hasJobPostings(): bool
     {
-        return Schema::hasTable('job_postings')
-            && DB::table('job_postings')->where('workplace_id', $this->id)->exists();
+        return $this->jobPostings()->exists();
     }
 }
