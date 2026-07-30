@@ -3,9 +3,11 @@
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Auth\PasswordResetController;
 use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\CompanyPlanAssignmentController;
 use App\Http\Controllers\Admin\CompanyUserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\JobPostingController;
+use App\Http\Controllers\Admin\PostingPlanController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\WorkplaceController;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +46,11 @@ Route::middleware('auth:admin')->group(function () {
         ->name('companies.users.resend');
     Route::post('companies/{company}/users/{user}/toggle', [CompanyUserController::class, 'toggle'])
         ->name('companies.users.toggle');
+
+    // 掲載プランの定義と、掲載企業への割当(SPEC.md 6.1)。
+    Route::resource('posting-plans', PostingPlanController::class)->except(['show', 'destroy']);
+    Route::post('companies/{company}/plan-assignments', [CompanyPlanAssignmentController::class, 'store'])
+        ->name('companies.plan-assignments.store');
 
     // 事業所の代行編集。運営者は立ち上げ期に掲載企業に代わって登録する(SPEC.md 11.6)。
     // shallow にしない: edit/update/destroy でも {company} を残し、

@@ -27,6 +27,12 @@
         <section class="rounded border border-gray-200 bg-white p-6 lg:col-span-1">
             <h2 class="text-sm font-semibold text-gray-700">企業情報</h2>
 
+            @php($currentAssignment = $planAssignments->first(fn ($a) => $a->ends_at === null || $a->ends_at->isFuture()))
+            <div class="mt-4 rounded border border-gray-100 bg-gray-50 p-3">
+                <p class="text-xs text-gray-500">現在の掲載プラン</p>
+                <p class="mt-1 font-medium">{{ $currentAssignment?->postingPlan->name ?? '未割当' }}</p>
+            </div>
+
             @if ($company->logo_path)
                 <img src="{{ \App\Services\ImageUploadService::url($company->logo_path) }}"
                      alt="{{ $company->name }}" class="mt-4 h-16 rounded border border-gray-200 bg-white p-1">
@@ -132,6 +138,58 @@
                 <button type="submit" class="mt-4 rounded px-4 py-2 text-sm font-semibold text-white"
                         style="background-color: var(--theme-color)">
                     招待メールを送る
+                </button>
+            </form>
+        </section>
+
+        {{-- 掲載プラン --}}
+        <section class="rounded border border-gray-200 bg-white p-6 lg:col-span-3">
+            <h2 class="text-sm font-semibold text-gray-700">掲載プランの割当履歴</h2>
+
+            <table class="mt-4 w-full text-sm">
+                <thead class="text-left text-xs text-gray-500">
+                    <tr>
+                        <th class="pb-2">プラン</th>
+                        <th class="pb-2">適用開始日</th>
+                        <th class="pb-2">適用終了日</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse ($planAssignments as $assignment)
+                        <tr>
+                            <td class="py-2">{{ $assignment->postingPlan->name }}</td>
+                            <td class="py-2">{{ $assignment->starts_at->format('Y-m-d') }}</td>
+                            <td class="py-2">{{ $assignment->ends_at?->format('Y-m-d') ?? '(継続中)' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="py-4 text-center text-gray-500">プランが割り当てられていません。</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            <form method="POST" action="{{ route('admin.companies.plan-assignments.store', $company) }}"
+                  class="mt-6 border-t border-gray-200 pt-6">
+                @csrf
+                <h3 class="text-sm font-semibold text-gray-700">プランを割り当てる</h3>
+                <p class="mt-1 text-xs text-gray-500">
+                    新しいプランを割り当てると、現在有効なプランは適用終了日が自動設定されます。
+                </p>
+
+                <div class="mt-3 grid gap-4 sm:grid-cols-3">
+                    <x-form.field name="posting_plan_id" label="掲載プラン" required>
+                        <x-form.select name="posting_plan_id" :options="$postingPlans->pluck('name', 'id')" required />
+                    </x-form.field>
+
+                    <x-form.field name="starts_at" label="適用開始日" required>
+                        <x-form.input name="starts_at" type="date" :value="now()->toDateString()" required />
+                    </x-form.field>
+                </div>
+
+                <button type="submit" class="mt-4 rounded px-4 py-2 text-sm font-semibold text-white"
+                        style="background-color: var(--theme-color)">
+                    割り当てる
                 </button>
             </form>
         </section>

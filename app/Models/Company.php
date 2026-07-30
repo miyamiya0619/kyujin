@@ -41,6 +41,11 @@ class Company extends Model
         return $this->hasMany(JobPosting::class);
     }
 
+    public function planAssignments(): HasMany
+    {
+        return $this->hasMany(CompanyPlanAssignment::class);
+    }
+
     public function prefecture(): BelongsTo
     {
         return $this->belongsTo(Prefecture::class);

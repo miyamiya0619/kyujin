@@ -9,6 +9,7 @@ use App\Models\JobCategory;
 use App\Models\JobFeature;
 use App\Models\JobPosting;
 use App\Models\Qualification;
+use App\Models\SiteSetting;
 use App\Services\SubmitJobPostingForReviewService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -66,6 +67,12 @@ trait ManagesJobPostings
     protected function doStore(JobPostingRequest $request, ?Company $routeCompany): RedirectResponse
     {
         $company = $this->targetCompany($routeCompany);
+
+        if (! SiteSetting::current()->canAddMoreJobPostings()) {
+            throw ValidationException::withMessages([
+                'plan' => '契約プランの登録可能求人数の上限に達しているため、これ以上求人を登録できません。',
+            ]);
+        }
 
         $this->ensureWorkplaceBelongsTo($company, $request->integer('workplace_id'));
 

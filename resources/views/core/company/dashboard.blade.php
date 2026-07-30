@@ -28,7 +28,29 @@
         </a>
     </div>
 
+    <div class="mt-6 rounded border border-gray-200 bg-white p-5">
+        <h2 class="text-sm font-semibold text-gray-700">掲載プラン</h2>
+
+        @if ($currentPlan)
+            <p class="mt-2 text-sm">現在のプラン: <span class="font-medium">{{ $currentPlan->name }}</span></p>
+            <dl class="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
+                <div>
+                    <dt class="text-xs text-gray-500">求人の残枠</dt>
+                    <dd class="font-medium">{{ $remainingJobPostingSlots === null ? '無制限' : "{$remainingJobPostingSlots} 件" }}</dd>
+                </div>
+                <div>
+                    <dt class="text-xs text-gray-500">事業所の残枠</dt>
+                    <dd class="font-medium">{{ $remainingWorkplaceSlots === null ? '無制限' : "{$remainingWorkplaceSlots} 件" }}</dd>
+                </div>
+            </dl>
+        @else
+            <p class="mt-2 text-sm text-gray-600">
+                掲載プランが割り当てられていません(制限なくご利用いただけます)。
+            </p>
+        @endif
+    </div>
+
     <p class="mt-6 text-sm text-gray-500">
-        掲載中の求人数・未対応の応募件数・掲載プランの残枠は T-09 と T-13 で実装します。
+        未対応の応募件数は T-13 で実装します。
     </p>
 @endsection

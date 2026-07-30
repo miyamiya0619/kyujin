@@ -69,4 +69,19 @@ class SiteSetting extends Model
     {
         static::$memo = null;
     }
+
+    /**
+     * パッケージ販売プランの上限(SPEC.md 6.2)。あなたが顧客に売った契約プランの
+     * 上限であり、掲載企業ごとの掲載プラン(PostingPlan)とは別軸。
+     * 運営者は変更できず、あなた(パッケージ提供者)が設定する。
+     */
+    public function canAddMoreCompanies(): bool
+    {
+        return $this->max_companies === null || Company::count() < $this->max_companies;
+    }
+
+    public function canAddMoreJobPostings(): bool
+    {
+        return $this->max_job_postings === null || JobPosting::count() < $this->max_job_postings;
+    }
 }

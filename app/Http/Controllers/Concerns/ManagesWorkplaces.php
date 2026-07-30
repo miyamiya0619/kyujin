@@ -9,8 +9,10 @@ use App\Models\FacilityType;
 use App\Models\Prefecture;
 use App\Models\Workplace;
 use App\Services\ImageUploadService;
+use App\Services\PostingPlanLimitService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -70,6 +72,12 @@ trait ManagesWorkplaces
     protected function doStore(WorkplaceRequest $request, ?Company $routeCompany): RedirectResponse
     {
         $company = $this->targetCompany($routeCompany);
+
+        if (! app(PostingPlanLimitService::class)->canAddWorkplace($company)) {
+            throw ValidationException::withMessages([
+                'plan' => '掲載プランの事業所登録数の上限に達しているため、これ以上登録できません。',
+            ]);
+        }
 
         $workplace = new Workplace($request->safe()->except('photo'));
         $workplace->company_id = $company->id;

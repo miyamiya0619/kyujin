@@ -14,18 +14,22 @@ use Illuminate\Validation\ValidationException;
  *
  * 審査対象は必ず「審査待ち」の求人に限る。下書きや公開中の求人を
  * 誤って審査してしまわないようにするため。
+ *
+ * ⚠ 承認時は掲載プランの同時掲載件数の上限を強制チェックしない。
+ *   上限は「掲載企業が公開申請できるか」(SubmitJobPostingForReviewService)の
+ *   関門であり、審査待ちに複数件が並んでいる状況で運営者がどれを通すかは
+ *   運営者の裁量に委ねる。強制ブロックすると柔軟な運用ができなくなる。
  */
 class ReviewJobPostingService
 {
+    public function __construct(private readonly PostingPlanLimitService $limits) {}
+
     public function approve(JobPosting $jobPosting, AdminUser $admin): JobPosting
     {
         $this->ensurePending($jobPosting);
 
         DB::transaction(function () use ($jobPosting, $admin) {
-            $jobPosting->update([
-                'status' => JobPosting::STATUS_PUBLISHED,
-                'published_at' => $jobPosting->published_at ?? now(),
-            ]);
+            $jobPosting->update($this->limits->publishAttributes($jobPosting->company));
 
             JobPostingReview::create([
                 'job_posting_id' => $jobPosting->id,

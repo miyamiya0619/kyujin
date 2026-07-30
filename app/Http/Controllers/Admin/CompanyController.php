@@ -6,11 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CompanyRequest;
 use App\Models\City;
 use App\Models\Company;
+use App\Models\PostingPlan;
 use App\Models\Prefecture;
+use App\Models\SiteSetting;
 use App\Services\ImageUploadService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 /**
  * 掲載企業の管理(運営者)。
@@ -54,6 +57,12 @@ class CompanyController extends Controller
 
     public function store(CompanyRequest $request): RedirectResponse
     {
+        if (! SiteSetting::current()->canAddMoreCompanies()) {
+            throw ValidationException::withMessages([
+                'plan' => '契約プランの掲載企業数の上限に達しているため、これ以上登録できません。',
+            ]);
+        }
+
         $company = new Company($request->safe()->except('logo'));
 
         if ($request->hasFile('logo')) {
@@ -72,6 +81,8 @@ class CompanyController extends Controller
         return view('admin.companies.show', [
             'company' => $company->load('prefecture', 'city'),
             'users' => $company->users()->orderBy('id')->get(),
+            'planAssignments' => $company->planAssignments()->with('postingPlan')->orderByDesc('starts_at')->get(),
+            'postingPlans' => PostingPlan::enabled()->ordered()->get(),
         ]);
     }
 

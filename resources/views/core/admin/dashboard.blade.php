@@ -20,6 +20,12 @@
             <p class="font-semibold">掲載企業</p>
             <p class="mt-1 text-sm text-gray-600">企業の登録と担当者アカウントの発行</p>
         </a>
+
+        <a href="{{ route('admin.posting-plans.index') }}"
+           class="rounded border border-gray-200 bg-white p-5 hover:border-gray-400">
+            <p class="font-semibold">掲載プラン</p>
+            <p class="mt-1 text-sm text-gray-600">プランの定義と掲載企業への割当</p>
+        </a>
     </div>
 
     <p class="mt-6 text-sm text-gray-500">
