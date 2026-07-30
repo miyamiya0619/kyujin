@@ -32,7 +32,17 @@ php -m
 # → 以下がすべてあることを確認する
 #    pdo_mysql / mbstring / gd / zip / bcmath / exif / curl / openssl
 #    / tokenizer / xml / fileinfo / ctype / json
-# → Imagick があるかも確認する(なければ画像処理は GD で実装する)
+
+# --- GD の WebP 対応(重要) --------------------------------------
+php -r 'var_dump(function_exists("imagewebp"));'
+php -r 'print_r(gd_info());' | grep -i webp
+# → false / 未対応だとアップロード画像の WebP 変換が本番で落ちる。
+#    ローカルの Docker で実際に欠けていて画像保存が失敗した箇所。
+#    未対応なら ImageUploadService の出力形式を JPEG に変える必要がある。
+
+# --- EXIF(スマホ写真の向き補正に必要) --------------------------
+php -r 'var_dump(function_exists("exif_read_data"));'
+# → 未対応だと横向きに撮影された事業所写真が倒れたまま表示される
 
 # --- PHP の実効値 ----------------------------------------------
 php -i | grep -E "^(memory_limit|max_execution_time|post_max_size|upload_max_filesize|max_input_vars|date.timezone)"
@@ -70,7 +80,8 @@ free -m 2>/dev/null || echo "free 不可(共有サーバのため)"
 | PHP バージョン(Web) | | 8.4 であること |
 | PHP バージョン(CLI) | | cron で使うパスも記録 |
 | GD | | |
-| Imagick | | なければ画像処理は GD で実装 |
+| **GD の WebP 対応** | | **未対応なら画像の保存形式を JPEG に変更が必要** |
+| EXIF | | 未対応だとスマホ写真の向き補正ができない |
 | memory_limit | | |
 | max_execution_time | | バッチのチャンクサイズを決める根拠 |
 | post_max_size / upload_max_filesize | | 画像アップロードの上限 |

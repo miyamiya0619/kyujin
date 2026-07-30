@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Auth\PasswordResetController;
+use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\CompanyUserController;
 use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,4 +29,16 @@ Route::middleware('auth:admin')->group(function () {
     Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
 
     Route::get('/', DashboardController::class)->name('dashboard');
+
+    // 掲載企業の管理。運営者は全ての掲載企業を扱える。
+    // 削除は提供しない。求人と応募が紐づくため、ステータスを archived にして止める。
+    Route::resource('companies', CompanyController::class)->except(['destroy']);
+
+    // 担当者アカウントの発行。掲載企業側からは追加できない(SPEC.md 5.3)。
+    Route::post('companies/{company}/users', [CompanyUserController::class, 'store'])
+        ->name('companies.users.store');
+    Route::post('companies/{company}/users/{user}/resend', [CompanyUserController::class, 'resend'])
+        ->name('companies.users.resend');
+    Route::post('companies/{company}/users/{user}/toggle', [CompanyUserController::class, 'toggle'])
+        ->name('companies.users.toggle');
 });

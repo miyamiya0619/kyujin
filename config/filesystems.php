@@ -47,6 +47,24 @@ return [
             'report' => false,
         ],
 
+        /*
+         * アップロード画像(企業ロゴ・事業所写真・キービジュアルなど)。
+         *
+         * **public ディスクではなくこのディスクを使うこと。**
+         * public ディスクは storage:link によるシンボリックリンクが前提だが、
+         * 本番のエックスサーバー(共有レンタル)で symlink() が使えるかは環境依存で、
+         * 使えない場合に画像が一切表示されなくなる。
+         * 公開ディレクトリへ直接書き込むことでこのリスクを避ける。
+         */
+        'uploads' => [
+            'driver' => 'local',
+            'root' => public_path('uploads'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/uploads',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

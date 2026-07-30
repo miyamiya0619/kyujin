@@ -20,6 +20,8 @@
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
+# アップロード画像。顧客ごとのデータであり配布物ではない。
+/public/uploads
 /storage/*.key
 /storage/pail
 /vendor

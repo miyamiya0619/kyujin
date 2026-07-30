@@ -3,6 +3,7 @@
 use App\Http\Controllers\Company\Auth\LoginController;
 use App\Http\Controllers\Company\Auth\PasswordResetController;
 use App\Http\Controllers\Company\DashboardController;
+use App\Http\Controllers\Company\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,4 +28,10 @@ Route::middleware('auth:company')->group(function () {
     Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
 
     Route::get('/', DashboardController::class)->name('dashboard');
+
+    // 自社の企業情報。**URL に企業 ID を含めない。**
+    // 対象は常にログイン中の担当者が所属する企業であり、
+    // ID を受け取らないことで他社を覗く余地を構造的に無くしている。
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 });

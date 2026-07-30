@@ -8,7 +8,15 @@
 @section('content')
     <h1 class="text-xl font-bold">ダッシュボード</h1>
 
-    <p class="mt-4 text-sm text-gray-600">
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="{{ route('company.profile.edit') }}"
+           class="rounded border border-gray-200 bg-white p-5 hover:border-gray-400">
+            <p class="font-semibold">企業情報</p>
+            <p class="mt-1 text-sm text-gray-600">求人ページに表示される自社の紹介</p>
+        </a>
+    </div>
+
+    <p class="mt-6 text-sm text-gray-500">
         掲載中の求人数・未対応の応募件数・掲載プランの残枠は T-09 と T-13 で実装します。
     </p>
 @endsection
