@@ -4,9 +4,13 @@ use App\Http\Controllers\Public\CompanyController;
 use App\Http\Controllers\Public\JobPostingController;
 use App\Http\Controllers\Public\SitemapController;
 use App\Http\Controllers\Public\TopController;
+use App\Http\Controllers\Seeker\AccountController;
 use App\Http\Controllers\Seeker\Auth\LoginController;
 use App\Http\Controllers\Seeker\Auth\PasswordResetController;
+use App\Http\Controllers\Seeker\Auth\RegisterController;
+use App\Http\Controllers\Seeker\ExperienceController;
 use App\Http\Controllers\Seeker\MyPageController;
+use App\Http\Controllers\Seeker\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +44,12 @@ Route::name('seeker.')->group(function () {
         Route::get('login', [LoginController::class, 'create'])->name('login');
         Route::post('login', [LoginController::class, 'store'])->name('login.store');
 
+        // 会員登録はサイト設定(enables_member)が OFF なら 404(SPEC.md 5.4)。
+        Route::middleware('member.enabled')->group(function () {
+            Route::get('register', [RegisterController::class, 'create'])->name('register');
+            Route::post('register', [RegisterController::class, 'store'])->name('register.store');
+        });
+
         Route::get('forgot-password', [PasswordResetController::class, 'request'])->name('password.request');
         Route::post('forgot-password', [PasswordResetController::class, 'email'])->name('password.email');
         Route::get('reset-password/{token}', [PasswordResetController::class, 'reset'])->name('password.reset');
@@ -50,5 +60,15 @@ Route::name('seeker.')->group(function () {
         Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
 
         Route::get('mypage', MyPageController::class)->name('mypage');
+
+        Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+
+        Route::post('experiences', [ExperienceController::class, 'store'])->name('experiences.store');
+        Route::put('experiences/{experience}', [ExperienceController::class, 'update'])->name('experiences.update');
+        Route::delete('experiences/{experience}', [ExperienceController::class, 'destroy'])->name('experiences.destroy');
+        Route::post('experiences/reorder', [ExperienceController::class, 'reorder'])->name('experiences.reorder');
+
+        Route::delete('account', [AccountController::class, 'destroy'])->name('account.destroy');
     });
 });
