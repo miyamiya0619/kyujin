@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Application;
 use App\Models\City;
 use App\Models\EmploymentType;
 use App\Models\FacilityType;
@@ -12,6 +13,7 @@ use App\Models\JobPosting;
 use App\Models\Prefecture;
 use App\Models\Qualification;
 use App\Services\JobPostingSearchService;
+use App\Services\ReferrerSourceResolver;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -41,13 +43,17 @@ class JobPostingController extends Controller
         ]);
     }
 
-    public function show(JobPosting $jobPosting): View
+    public function show(Request $request, JobPosting $jobPosting, ReferrerSourceResolver $referrer): View
     {
         // 審査待ち・下書き・掲載終了の求人 URL を直接叩かれても見せない。
         // 403 ではなく 404(存在自体を知らせない。CLAUDE.md 3.5 の延長)。
         if (! JobPosting::published()->whereKey($jobPosting->id)->exists()) {
             throw new NotFoundHttpException;
         }
+
+        // 外部媒体からの流入(?ref=indeed 等)をセッションに記録する(SPEC.md 10.2)。
+        // 応募まで別ページを跨ぐため、応募完了時点ではなくここで捕まえておく。
+        $referrer->capture($request);
 
         $jobPosting->load([
             'company', 'workplace.prefecture', 'workplace.city', 'workplace.facilityType',
@@ -62,8 +68,13 @@ class JobPostingController extends Controller
         //   Query Builder には素直に主キーのカラム名を書くこと。
         DB::table('job_postings')->where('id', $jobPosting->id)->increment('view_count');
 
+        $jobSeeker = auth('seeker')->user();
+
         return view('public.jobs.show', [
             'jobPosting' => $jobPosting,
+            'hasApplied' => $jobSeeker && Application::where('job_posting_id', $jobPosting->id)
+                ->where('job_seeker_id', $jobSeeker->id)
+                ->exists(),
             'relatedJobPostings' => JobPosting::published()
                 ->where('company_id', $jobPosting->company_id)
                 ->whereKeyNot($jobPosting->id)

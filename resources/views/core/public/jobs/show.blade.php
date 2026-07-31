@@ -34,12 +34,17 @@
             </p>
 
             <div class="mt-6">
-                <a href="{{ route('seeker.login') }}"
-                   class="inline-block rounded px-6 py-3 text-sm font-semibold text-white"
-                   style="background-color: var(--theme-color)">
-                    この求人に応募する
-                </a>
-                <p class="mt-1 text-xs text-gray-500">応募機能は準備中です(T-12 で実装)。</p>
+                @if ($hasApplied)
+                    <span class="inline-block rounded border border-gray-300 px-6 py-3 text-sm font-semibold text-gray-500">
+                        応募済みです
+                    </span>
+                @else
+                    <a href="{{ route('public.jobs.apply', $jobPosting) }}"
+                       class="inline-block rounded px-6 py-3 text-sm font-semibold text-white"
+                       style="background-color: var(--theme-color)">
+                        この求人に応募する
+                    </a>
+                @endif
             </div>
 
             <dl class="mt-6 grid grid-cols-1 gap-4 border-t border-gray-100 pt-6 sm:grid-cols-2">

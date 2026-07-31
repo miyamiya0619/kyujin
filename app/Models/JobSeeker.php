@@ -54,6 +54,11 @@ class JobSeeker extends Authenticatable
         return $this->hasMany(JobSeekerExperience::class)->orderBy('sort_order');
     }
 
+    public function applications(): HasMany
+    {
+        return $this->hasMany(Application::class);
+    }
+
     public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPasswordNotification($token, 'seeker.password.reset'));

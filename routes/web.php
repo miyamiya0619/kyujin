@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Public\ApplicationController;
 use App\Http\Controllers\Public\CompanyController;
 use App\Http\Controllers\Public\JobPostingController;
 use App\Http\Controllers\Public\SitemapController;
@@ -28,6 +29,8 @@ Route::get('/', TopController::class)->name('public.top');
 Route::name('public.')->group(function () {
     Route::get('jobs', [JobPostingController::class, 'index'])->name('jobs.index');
     Route::get('jobs/{job_posting}', [JobPostingController::class, 'show'])->name('jobs.show');
+    Route::get('jobs/{job_posting}/apply', [ApplicationController::class, 'create'])->name('jobs.apply');
+    Route::post('jobs/{job_posting}/apply', [ApplicationController::class, 'store'])->name('jobs.apply.store');
     Route::get('companies/{company}', [CompanyController::class, 'show'])->name('companies.show');
     Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 });

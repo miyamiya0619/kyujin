@@ -25,9 +25,26 @@
             </a>
         </div>
 
-        <p class="mt-6 text-sm text-gray-500">
-            応募履歴は T-12 で実装します。
-        </p>
+        <div class="mt-8">
+            <h2 class="text-sm font-semibold text-gray-700">応募履歴</h2>
+
+            @if ($applications->isEmpty())
+                <p class="mt-2 text-sm text-gray-500">まだ応募した求人はありません。</p>
+            @else
+                <div class="mt-3 space-y-3">
+                    @foreach ($applications as $application)
+                        <div class="rounded border border-gray-200 bg-white p-4">
+                            <p class="text-sm font-semibold">{{ $application->jobPosting->title }}</p>
+                            <p class="mt-1 text-xs text-gray-600">{{ $application->jobPosting->company->name }}</p>
+                            <p class="mt-2 flex items-center justify-between text-xs text-gray-500">
+                                <span>応募日: {{ $application->applied_at->format('Y/m/d') }}</span>
+                                <span class="rounded bg-gray-100 px-2 py-0.5">{{ $application->statusLabel() }}</span>
+                            </p>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
 
         <div class="mt-10 border-t border-gray-100 pt-6">
             <form method="POST" action="{{ route('seeker.account.destroy') }}"
