@@ -255,6 +255,29 @@ class JobPostingManagementTest extends TestCase
         $this->assertDatabaseMissing('job_postings', ['title' => '給与不整合求人']);
     }
 
+    public function test_外部媒体への配信可否を保存できる(): void
+    {
+        $company = Company::factory()->create();
+        $user = CompanyUser::factory()->for($company)->create();
+        $workplace = Workplace::factory()->for($company)->create();
+
+        $this->actingAs($user, 'company')->post(route('company.job-postings.store'), [
+            'workplace_id' => $workplace->id,
+            'title' => '配信許可求人',
+            'allow_external_feed' => '1',
+        ]);
+
+        $jobPosting = JobPosting::where('title', '配信許可求人')->firstOrFail();
+        $this->assertTrue($jobPosting->allow_external_feed);
+
+        $this->actingAs($user, 'company')->put(route('company.job-postings.update', $jobPosting), [
+            'workplace_id' => $workplace->id,
+            'title' => '配信許可求人',
+        ]);
+
+        $this->assertFalse($jobPosting->fresh()->allow_external_feed, 'チェックを外して更新すると false になる');
+    }
+
     public function test_一覧には自社の求人だけが表示される(): void
     {
         $mine = Company::factory()->create();

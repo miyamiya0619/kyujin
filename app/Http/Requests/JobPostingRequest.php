@@ -47,6 +47,7 @@ class JobPostingRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:5000'],
 
             'has_night_shift' => ['boolean'],
+            'allow_external_feed' => ['boolean'],
 
             'qualification_ids' => ['nullable', 'array'],
             'qualification_ids.*' => ['integer', 'exists:qualifications,id'],
@@ -74,6 +75,7 @@ class JobPostingRequest extends FormRequest
             'benefits' => '待遇・福利厚生',
             'description' => '仕事内容',
             'has_night_shift' => '夜勤の有無',
+            'allow_external_feed' => 'アグリゲーション媒体への配信',
             'qualification_ids' => '必要資格',
             'feature_ids' => 'こだわり条件',
         ];
@@ -91,6 +93,9 @@ class JobPostingRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge(['has_night_shift' => $this->boolean('has_night_shift')]);
+        $this->merge([
+            'has_night_shift' => $this->boolean('has_night_shift'),
+            'allow_external_feed' => $this->boolean('allow_external_feed'),
+        ]);
     }
 }

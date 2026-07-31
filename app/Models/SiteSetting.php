@@ -32,6 +32,7 @@ class SiteSetting extends Model
             'requires_review' => 'boolean',
             'enables_member' => 'boolean',
             'enables_posting_plan' => 'boolean',
+            'enables_external_feed' => 'boolean',
             'max_job_postings' => 'integer',
             'max_companies' => 'integer',
         ];

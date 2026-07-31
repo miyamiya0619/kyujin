@@ -121,6 +121,19 @@ class JobPosting extends Model
             ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
     }
 
+    /**
+     * アグリゲーション媒体(Indeed 等の XML フィード)への配信対象に絞る(SPEC.md 10.2)。
+     *
+     * `published()` に加えて `allow_external_feed`(掲載企業側の配信可否)を見る。
+     * 運営者側の配信可否(`SiteSetting::current()->enables_external_feed`)はメディア
+     * 全体のグローバル設定であり求人単位では絞り込めないため、呼び出し側
+     * (フィード生成コマンド)で別途確認すること。
+     */
+    public function scopeFeedEligible(Builder $query): Builder
+    {
+        return $query->published()->where('allow_external_feed', true);
+    }
+
     public function isDraft(): bool
     {
         return $this->status === self::STATUS_DRAFT;

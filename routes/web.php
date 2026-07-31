@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Feed\FeedController;
 use App\Http\Controllers\Public\ApplicationController;
 use App\Http\Controllers\Public\CompanyController;
 use App\Http\Controllers\Public\JobPostingController;
@@ -34,6 +35,11 @@ Route::name('public.')->group(function () {
     Route::get('companies/{company}', [CompanyController::class, 'show'])->name('companies.show');
     Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 });
+
+// アグリゲーション媒体向け XML フィード(SPEC.md 10.1)。
+Route::get('feed/indeed.xml', [FeedController::class, 'indeed'])->name('feed.indeed');
+Route::get('feed/kyujinbox.xml', [FeedController::class, 'kyujinbox'])->name('feed.kyujinbox');
+Route::get('feed/stanby.xml', [FeedController::class, 'stanby'])->name('feed.stanby');
 
 /*
 |--------------------------------------------------------------------------

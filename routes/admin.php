@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\CompanyPlanAssignmentController;
 use App\Http\Controllers\Admin\CompanyUserController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FeedController;
 use App\Http\Controllers\Admin\JobPostingController;
 use App\Http\Controllers\Admin\PostingPlanController;
 use App\Http\Controllers\Admin\ReviewController;
@@ -74,4 +75,7 @@ Route::middleware('auth:admin')->group(function () {
 
     // 応募の横断確認。閲覧のみ(SPEC.md 5.3)。
     Route::get('applications', [ApplicationController::class, 'index'])->name('applications.index');
+
+    // 媒体別のアグリゲーション効果(SPEC.md 10.2)。
+    Route::get('feeds', [FeedController::class, 'index'])->name('feeds.index');
 });

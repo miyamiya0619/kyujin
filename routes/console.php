@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\CloseExpiredJobPostingsCommand;
+use App\Console\Commands\GenerateAggregationFeedsCommand;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -17,5 +18,10 @@ Artisan::command('inspire', function () {
 | (常駐プロセスが使えないため。CLAUDE.md 4章)。
 */
 Schedule::command(CloseExpiredJobPostingsCommand::class)
+    ->daily()
+    ->withoutOverlapping();
+
+// アグリゲーション媒体向け XML フィードの日次生成(SPEC.md 10.2)。
+Schedule::command(GenerateAggregationFeedsCommand::class)
     ->daily()
     ->withoutOverlapping();

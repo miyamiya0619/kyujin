@@ -99,4 +99,14 @@
     <x-form.field name="description" label="仕事内容">
         <x-form.textarea name="description" :value="$jobPosting->description" :rows="6" />
     </x-form.field>
+
+    <x-form.field name="allow_external_feed" label="外部媒体への配信"
+                  help="Indeed・求人ボックス・スタンバイ等のアグリゲーション媒体にこの求人を配信します。運営者側の設定が OFF の場合は配信されません。">
+        <label class="mt-1 flex items-center gap-2 text-sm">
+            <input type="checkbox" name="allow_external_feed" value="1"
+                   @checked(old('allow_external_feed', $jobPosting->allow_external_feed))
+                   class="rounded border-gray-300">
+            配信を許可する
+        </label>
+    </x-form.field>
 </div>
