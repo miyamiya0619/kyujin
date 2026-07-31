@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
+use App\Models\Application;
 use App\Services\PostingPlanLimitService;
 use Illuminate\Contracts\View\View;
 
 /**
  * 掲載企業のダッシュボード。
- * T-13 で未対応の応募件数を追加する。
  */
 class DashboardController extends Controller
 {
@@ -20,6 +20,9 @@ class DashboardController extends Controller
             'currentPlan' => $limits->currentPlan($company),
             'remainingJobPostingSlots' => $limits->remainingJobPostingSlots($company),
             'remainingWorkplaceSlots' => $limits->remainingWorkplaceSlots($company),
+            'newApplicationsCount' => Application::where('company_id', $company->id)
+                ->where('status', Application::STATUS_NEW)
+                ->count(),
         ]);
     }
 }

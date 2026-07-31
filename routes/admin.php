@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ApplicationController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Auth\PasswordResetController;
 use App\Http\Controllers\Admin\CompanyController;
@@ -70,4 +71,7 @@ Route::middleware('auth:admin')->group(function () {
         ->name('job-postings.approve');
     Route::post('job-postings/{job_posting}/reject', [ReviewController::class, 'reject'])
         ->name('job-postings.reject');
+
+    // 応募の横断確認。閲覧のみ(SPEC.md 5.3)。
+    Route::get('applications', [ApplicationController::class, 'index'])->name('applications.index');
 });

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Company\ApplicationController;
 use App\Http\Controllers\Company\Auth\LoginController;
 use App\Http\Controllers\Company\Auth\PasswordResetController;
 use App\Http\Controllers\Company\DashboardController;
@@ -46,4 +47,16 @@ Route::middleware('auth:company')->group(function () {
         ->name('job-postings.duplicate');
     Route::post('job-postings/{job_posting}/submit', [JobPostingController::class, 'submit'])
         ->name('job-postings.submit');
+
+    // 応募者管理。**URL に企業 ID を含めない**(CLAUDE.md 3.8)。
+    // export は {application} より先に登録し、"export" を応募 ID と誤認識させない。
+    Route::get('applications/export', [ApplicationController::class, 'exportCsv'])->name('applications.export');
+    Route::get('applications', [ApplicationController::class, 'index'])->name('applications.index');
+    Route::get('applications/{application}', [ApplicationController::class, 'show'])->name('applications.show');
+    Route::put('applications/{application}/status', [ApplicationController::class, 'updateStatus'])
+        ->name('applications.status.update');
+    Route::post('applications/{application}/notes', [ApplicationController::class, 'storeNote'])
+        ->name('applications.notes.store');
+    Route::delete('applications/{application}/notes/{note}', [ApplicationController::class, 'destroyNote'])
+        ->name('applications.notes.destroy');
 });
