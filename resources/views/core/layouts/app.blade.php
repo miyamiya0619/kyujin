@@ -15,9 +15,23 @@
 
     <title>@yield('title', $site->site_name)</title>
 
-    @if ($site->meta_description)
-        <meta name="description" content="{{ $site->meta_description }}">
+    @php($metaDescription = trim($__env->yieldContent('meta_description', $site->meta_description ?? '')))
+    @if ($metaDescription)
+        <meta name="description" content="{{ $metaDescription }}">
     @endif
+
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    {{-- OGP。個別ページは @section('og_title') 等で上書きできる --}}
+    <meta property="og:site_name" content="{{ $site->site_name }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="@yield('og_title', $__env->yieldContent('title', $site->site_name))">
+    <meta property="og:description" content="{{ $metaDescription }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    @if ($site->key_visual_path)
+        <meta property="og:image" content="{{ \App\Services\ImageUploadService::url($site->key_visual_path) }}">
+    @endif
+    <meta name="twitter:card" content="summary_large_image">
 
     {{-- 顧客が標準テーマの色だけ変える場合はここが効く --}}
     <style>:root { --theme-color: {{ $site->theme_color }}; }</style>

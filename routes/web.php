@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Public\CompanyController;
+use App\Http\Controllers\Public\JobPostingController;
+use App\Http\Controllers\Public\SitemapController;
 use App\Http\Controllers\Public\TopController;
 use App\Http\Controllers\Seeker\Auth\LoginController;
 use App\Http\Controllers\Seeker\Auth\PasswordResetController;
@@ -17,6 +20,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', TopController::class)->name('public.top');
+
+Route::name('public.')->group(function () {
+    Route::get('jobs', [JobPostingController::class, 'index'])->name('jobs.index');
+    Route::get('jobs/{job_posting}', [JobPostingController::class, 'show'])->name('jobs.show');
+    Route::get('companies/{company}', [CompanyController::class, 'show'])->name('companies.show');
+    Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+});
 
 /*
 |--------------------------------------------------------------------------

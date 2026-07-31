@@ -109,10 +109,16 @@ class JobPosting extends Model
     /**
      * 公開サイト・検索・フィードに出してよい求人だけに絞る。
      * 一覧・検索の起点は必ずこれを通すこと(CLAUDE.md 3.5)。
+     *
+     * `status = published` に加えて `expires_at` も見る。掲載期限切れの
+     * 自動 closed 化は日次バッチ(CloseExpiredJobPostingsCommand)なので、
+     * バッチが未実行の間は最大 24 時間 published のまま残る。
+     * ステータスだけを条件にすると、その間だけ期限切れ求人が公開面に漏れる。
      */
     public function scopePublished(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_PUBLISHED);
+        return $query->where('status', self::STATUS_PUBLISHED)
+            ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
     }
 
     public function isDraft(): bool
