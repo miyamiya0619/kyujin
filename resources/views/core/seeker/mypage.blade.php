@@ -47,8 +47,13 @@
         </div>
 
         <div class="mt-10 border-t border-gray-100 pt-6">
+            <p class="text-xs text-gray-500">
+                退会するとプロフィール・保有資格・職務経歴は削除されます。ただし、
+                既に応募した求人については、応募時点の内容が選考記録として掲載企業側に残ります。
+            </p>
             <form method="POST" action="{{ route('seeker.account.destroy') }}"
-                  onsubmit="return confirm('退会するとプロフィール情報が削除されます。よろしいですか?')">
+                  onsubmit="return confirm('退会するとプロフィール情報が削除されます。よろしいですか?(応募済みの選考記録は掲載企業側に残ります)')"
+                  class="mt-2">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="text-xs text-red-600 hover:underline">退会する</button>

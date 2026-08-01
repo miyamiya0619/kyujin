@@ -2,6 +2,9 @@
 
 namespace Tests\Feature\Seeker;
 
+use App\Models\Application;
+use App\Models\ApplicationResumeSnapshot;
+use App\Models\JobPosting;
 use App\Models\JobSeeker;
 use App\Models\Qualification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -36,6 +39,28 @@ class AccountDeletionTest extends TestCase
 
         $this->assertDatabaseMissing('job_seeker_experiences', ['job_seeker_id' => $jobSeeker->id]);
         $this->assertDatabaseMissing('job_seeker_qualification', ['job_seeker_id' => $jobSeeker->id]);
+    }
+
+    public function test_退会しても応募済みの選考記録は掲載企業側に残る(): void
+    {
+        $jobSeeker = JobSeeker::factory()->create();
+        $jobPosting = JobPosting::factory()->published()->create();
+        $application = Application::factory()->create([
+            'job_posting_id' => $jobPosting->id,
+            'job_seeker_id' => $jobSeeker->id,
+            'company_id' => $jobPosting->company_id,
+        ]);
+        $snapshot = ApplicationResumeSnapshot::create([
+            'application_id' => $application->id,
+            'payload' => ['name' => $jobSeeker->name],
+            'snapshot_at' => now(),
+        ]);
+
+        $this->actingAs($jobSeeker, 'seeker')->delete(route('seeker.account.destroy'));
+
+        $this->assertModelExists($application);
+        $this->assertModelExists($snapshot);
+        $this->assertNull($application->fresh()->job_seeker_id, '求職者への参照だけが外れる');
     }
 
     public function test_未ログインでは退会できない(): void

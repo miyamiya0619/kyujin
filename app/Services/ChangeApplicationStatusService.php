@@ -35,7 +35,8 @@ class ChangeApplicationStatusService
         $application = $application->fresh();
 
         // 実質的な変化がない(同じステータスへの再設定)場合は求職者に通知しない。
-        if ($fromStatus !== $toStatus) {
+        // 退会済み(job_seeker_id が null)の場合も宛先が無いため通知しない。
+        if ($fromStatus !== $toStatus && $application->jobSeeker) {
             $application->jobSeeker->notify(new ApplicationStatusChangedNotification($application, $toStatus));
         }
 
