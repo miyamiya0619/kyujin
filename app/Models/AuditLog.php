@@ -40,4 +40,33 @@ class AuditLog extends Model
             'ip_address' => $ipAddress,
         ]);
     }
+
+    /**
+     * 操作者本人。`actor_type` + `actor_id` は 3 つのガードにまたがる
+     * ポリモーフィックな組であり外部キー制約を張っていないため、都度引く
+     * (退会・アカウント削除で見つからない場合は null になる。証跡自体は残る)。
+     */
+    public function actor(): ?Model
+    {
+        return match ($this->actor_type) {
+            'admin' => AdminUser::find($this->actor_id),
+            'company' => CompanyUser::find($this->actor_id),
+            'seeker' => JobSeeker::find($this->actor_id),
+            default => null,
+        };
+    }
+
+    public function actorLabel(): string
+    {
+        return $this->actor()?->name ?? "{$this->actor_type}#{$this->actor_id}(退会・削除済み)";
+    }
+
+    public function targetLabel(): ?string
+    {
+        if (! $this->target_type) {
+            return null;
+        }
+
+        return class_basename($this->target_type)."#{$this->target_id}";
+    }
 }

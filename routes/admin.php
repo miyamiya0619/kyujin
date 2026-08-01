@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ApplicationController;
+use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Auth\PasswordResetController;
 use App\Http\Controllers\Admin\CompanyController;
@@ -9,8 +10,10 @@ use App\Http\Controllers\Admin\CompanyUserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FeedController;
 use App\Http\Controllers\Admin\JobPostingController;
+use App\Http\Controllers\Admin\MasterController;
 use App\Http\Controllers\Admin\PostingPlanController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\WorkplaceController;
 use Illuminate\Support\Facades\Route;
 
@@ -78,4 +81,17 @@ Route::middleware('auth:admin')->group(function () {
 
     // 媒体別のアグリゲーション効果(SPEC.md 10.2)。
     Route::get('feeds', [FeedController::class, 'index'])->name('feeds.index');
+
+    // サイト設定。対象は常に SiteSetting::current() の 1 行のみ(単数リソース)。
+    Route::get('site-settings', [SiteSettingController::class, 'edit'])->name('site-settings.edit');
+    Route::put('site-settings', [SiteSettingController::class, 'update'])->name('site-settings.update');
+
+    // マスタ管理(有効/無効・並び順のみ。CLAUDE.md 3.7)。
+    Route::get('masters', [MasterController::class, 'home'])->name('masters.home');
+    Route::get('masters/{type}', [MasterController::class, 'index'])->name('masters.index');
+    Route::post('masters/{type}/reorder', [MasterController::class, 'reorder'])->name('masters.reorder');
+    Route::post('masters/{type}/{id}/toggle', [MasterController::class, 'toggle'])->name('masters.toggle');
+
+    // 監査ログの閲覧(SPEC.md 5.3)。
+    Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
 });

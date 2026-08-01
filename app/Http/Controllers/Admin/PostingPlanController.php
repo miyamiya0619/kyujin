@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PostingPlanRequest;
+use App\Models\AuditLog;
 use App\Models\PostingPlan;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -28,7 +29,9 @@ class PostingPlanController extends Controller
 
     public function store(PostingPlanRequest $request): RedirectResponse
     {
-        PostingPlan::create($request->validated());
+        $postingPlan = PostingPlan::create($request->validated());
+
+        AuditLog::record('admin', auth('admin')->id(), 'posting_plans.create', $postingPlan, $request->ip());
 
         return redirect()->route('admin.posting-plans.index')->with('status', '掲載プランを作成しました。');
     }
@@ -41,6 +44,8 @@ class PostingPlanController extends Controller
     public function update(PostingPlanRequest $request, PostingPlan $postingPlan): RedirectResponse
     {
         $postingPlan->update($request->validated());
+
+        AuditLog::record('admin', auth('admin')->id(), 'posting_plans.update', $postingPlan, $request->ip());
 
         return redirect()->route('admin.posting-plans.index')->with('status', '掲載プランを更新しました。');
     }

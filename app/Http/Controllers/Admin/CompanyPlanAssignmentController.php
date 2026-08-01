@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CompanyPlanAssignmentRequest;
+use App\Models\AuditLog;
 use App\Models\Company;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ class CompanyPlanAssignmentController extends Controller
     {
         $startsAt = $request->date('starts_at');
 
-        DB::transaction(function () use ($request, $company, $startsAt) {
+        $assignment = DB::transaction(function () use ($request, $company, $startsAt) {
             $company->planAssignments()
                 ->active()
                 ->get()
@@ -28,12 +29,14 @@ class CompanyPlanAssignmentController extends Controller
                     'ends_at' => $startsAt->clone()->subDay(),
                 ]));
 
-            $company->planAssignments()->create([
+            return $company->planAssignments()->create([
                 'posting_plan_id' => $request->integer('posting_plan_id'),
                 'starts_at' => $startsAt,
                 'ends_at' => null,
             ]);
         });
+
+        AuditLog::record('admin', auth('admin')->id(), 'company_plan_assignments.create', $assignment, $request->ip());
 
         return redirect()
             ->route('admin.companies.show', $company)

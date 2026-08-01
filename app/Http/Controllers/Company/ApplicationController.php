@@ -49,6 +49,9 @@ class ApplicationController extends Controller
             'statusLogs.companyUser', 'notes.companyUser',
         ]);
 
+        // 応募者情報(履歴書スナップショット)の閲覧は監査ログの記録対象(SPEC.md 5.3)。
+        AuditLog::record('company', auth('company')->id(), 'applications.view', $application, request()->ip());
+
         return view('company.applications.show', [
             'application' => $application,
             'statusOptions' => Application::STATUS_LABELS,

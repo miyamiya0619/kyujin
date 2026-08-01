@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Application;
 use App\Models\JobPosting;
 use Illuminate\Contracts\View\View;
 
 /**
- * 運営者のダッシュボード。
- * T-16 で掲載中求人数・応募数・媒体別流入を追加する。
+ * 運営者のダッシュボード(SPEC.md 5.3)。
  */
 class DashboardController extends Controller
 {
@@ -16,6 +16,10 @@ class DashboardController extends Controller
     {
         return view('admin.dashboard', [
             'pendingCount' => JobPosting::where('status', JobPosting::STATUS_PENDING)->count(),
+            'publishedCount' => JobPosting::published()->count(),
+            'monthlyApplicationsCount' => Application::whereBetween('applied_at', [
+                now()->startOfMonth(), now()->endOfMonth(),
+            ])->count(),
         ]);
     }
 }
