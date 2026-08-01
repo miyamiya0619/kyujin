@@ -6,6 +6,8 @@ use App\Models\Application;
 use App\Models\ApplicationResumeSnapshot;
 use App\Models\JobPosting;
 use App\Models\JobSeeker;
+use App\Notifications\ApplicationReceivedNotification;
+use App\Notifications\NewApplicationNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -26,7 +28,7 @@ class CreateApplicationService
             ]);
         }
 
-        return DB::transaction(function () use ($jobSeeker, $jobPosting, $message, $referrerSource) {
+        $application = DB::transaction(function () use ($jobSeeker, $jobPosting, $message, $referrerSource) {
             $application = Application::create([
                 'job_posting_id' => $jobPosting->id,
                 'job_seeker_id' => $jobSeeker->id,
@@ -47,6 +49,17 @@ class CreateApplicationService
 
             return $application;
         });
+
+        // 通知はトランザクション確定後に送る(ロールバックされた応募について
+        // キューにジョブを積んでしまわないようにするため)。キュー経由なので
+        // このメソッド自体はキューワーカーが動いていなくても成功する(TASKS.md T-15)。
+        $jobSeeker->notify(new ApplicationReceivedNotification($application));
+
+        foreach ($jobPosting->company->users()->where('is_active', true)->get() as $companyUser) {
+            $companyUser->notify(new NewApplicationNotification($application));
+        }
+
+        return $application;
     }
 
     /**

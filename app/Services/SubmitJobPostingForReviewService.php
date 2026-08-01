@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\AdminUser;
 use App\Models\JobPosting;
 use App\Models\JobPostingReview;
 use App\Models\SiteSetting;
+use App\Notifications\NewReviewPendingNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -47,6 +49,15 @@ class SubmitJobPostingForReviewService
             ]);
         });
 
-        return $jobPosting->fresh();
+        $jobPosting = $jobPosting->fresh();
+
+        // 審査待ちになった場合のみ運営者へ通知する(自動承認では審査が発生しないため不要)。
+        if ($jobPosting->isPending()) {
+            foreach (AdminUser::where('is_active', true)->get() as $admin) {
+                $admin->notify(new NewReviewPendingNotification($jobPosting));
+            }
+        }
+
+        return $jobPosting;
     }
 }

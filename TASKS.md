@@ -891,32 +891,82 @@ curl に渡していた**ことが原因で、アプリケーション側の問�
 
 ---
 
-## - [ ] T-15 メール通知
+## - [x] T-15 メール通知 — **完了**
 
 **目的**: 応募・審査の動きを関係者が確実に知る
 
 **依存**: T-13, T-08
 
-**作業内容**
-- 外部 SMTP(SendGrid / SES)の設定
-- **キューは cron 実行前提で設計する**(常駐プロセスが使えない)
-  - ドライバは `database`
-  - `php artisan queue:work --stop-when-empty --max-time=50` を毎分の cron で回す想定
-  - **通知が最大1分遅れることを前提にした文言にする**(「すぐに届きます」と書かない)
-- 通知の種類
-  - 掲載企業へ: 新規応募、審査の承認・差戻し
-  - 運営者へ: 新しい審査待ちが発生
-  - 求職者へ: 応募を受け付けた、選考ステータスが変わった
-- メールテンプレートにメディア名・ロゴを反映(`site_settings` から)
-- ローカルでは mailpit で確認
+### 実装した内容
 
-**完了条件**
-- 応募すると掲載企業と求職者の双方にメールが届く
-- 審査の承認・差戻しが掲載企業に通知される
-- **キューワーカーを常駐させず、`queue:work --stop-when-empty` の単発実行だけで送られる**
-- キューワーカーが動いていなくても応募・審査自体は成功する
-- 失敗したジョブが `failed_jobs` に記録され、再実行できる
-- メール本文にメディア名が正しく入る
+- [x] 外部 SMTP(SendGrid / SES)の設定は既に `.env.example` に用意済み
+      (ローカルは mailpit)だったため、`QUEUE_CONNECTION=database` の上に
+      cron 前提であることの注記を追加した
+- [x] 通知クラス 5 種を新設し、いずれも `ShouldQueue` を実装してキュー経由で送る
+      - `NewApplicationNotification`(掲載企業へ: 新規応募)
+      - `JobPostingApprovedNotification`(掲載企業へ: 審査承認)
+      - `NewReviewPendingNotification`(運営者へ: 新しい審査待ち)
+      - `ApplicationReceivedNotification`(求職者へ: 応募受付)
+      - `ApplicationStatusChangedNotification`(求職者へ: 選考ステータス変更)
+      - 選考ステータスが実質変わらない(同じステータスへの再設定)場合は送らない
+- [x] **既存の `JobPostingRejectedNotification` の不備を修正した。** `use Queueable`
+      は使っていたが `ShouldQueue` を実装しておらず、実際には同期送信されていた
+      (Laravel はキュー投入の可否を `ShouldQueue` インターフェースの有無だけで
+      判定し、`Queueable` トレイルの有無は見ない)。今回 `implements ShouldQueue`
+      を追加し、他の新規通知と同じ扱いにした
+- [x] 各通知の送信先は `is_active = true` の担当者・運営者に限定
+      (無効化されたアカウントに送らない)
+- [x] 通知の発火元をサービス層に追加
+      - `CreateApplicationService`: DB トランザクション確定後に求職者・掲載企業へ通知
+        (ロールバックされた応募についてキューにジョブを積まないため)
+      - `ReviewJobPostingService::approve()`: 掲載企業へ通知
+      - `SubmitJobPostingForReviewService::submit()`: 審査待ちになった場合のみ運営者へ通知
+        (審査 OFF による自動承認では発生しない)
+      - `ChangeApplicationStatusService::change()`: 求職者へ通知
+- [x] メールテンプレートにメディア名・ロゴを反映。`vendor:publish` で Markdown
+      メールテンプレートを取り込み、`config('app.name')` を参照していた
+      ヘッダー・フッターを `$site->site_name` / `$site->logo_path` に置き換えた。
+      `$site` は `ThemeServiceProvider` が `View::composer('*', ...)` で
+      **全てのビューに既に共有している変数**であり、Markdown メールのビューも
+      対象に含まれるため、通知クラス側は何もせずに全メールへ反映される
+- [x] ローカルは mailpit(既存の docker-compose 構成)で確認できる状態を維持
+
+### 検証済み(9 テスト / 21 assertions)
+
+**通知の送信先**(`NotificationTest`、7 テスト、`Notification::fake()` で検証)
+- 応募すると求職者と掲載企業の有効な担当者に通知される。無効化された担当者には送らない
+- 審査に提出すると有効な運営者にだけ通知される。審査 OFF 設定では通知自体が発生しない
+- 承認すると有効な担当者にだけ通知される / 差戻すと担当者に通知される
+- 選考ステータスが変わると求職者に通知される。**同じステータスへの変更では送られない**
+- 通知本文にメディア名が正しく入ることをメール件名で確認
+
+**キューの実機構**(`QueueWorkerTest`、2 テスト、`QUEUE_CONNECTION=database` に切替えて検証)
+- **キューワーカーが動いていなくても応募自体は成功し、通知はジョブとして `jobs` に積まれるだけになる**
+- **接続失敗するメール設定で `queue:work --stop-when-empty --tries=1` を実行すると
+  `failed_jobs` に記録され、設定を戻して `queue:retry` すると `jobs` に戻ること**
+
+### 設計上の判断
+
+- **`JobPostingRejectedNotification` の `ShouldQueue` 漏れを発見・修正した。**
+  T-08 時点で「キュー経由で送る」という意図のコメントと `Queueable` トレイトだけが
+  書かれ、肝心の `ShouldQueue` インターフェースが抜けていたため、実際には同期送信
+  されていた。T-15 でキュー基盤を整える中で気づき、他の通知と揃えて修正した。
+- **`CompanyUserInvitationNotification` と `ResetPasswordNotification` はキューに載せない。**
+  どちらも「その場で相手に伝える」即時性が求められるユースケースであり、
+  cron 経由で最大 1 分待たされると体験が悪い。T-15 の作業内容にもこの 2 つは
+  含まれておらず、意図的にスコープ外とした(コメントに明記済み)。
+- **通知はサービス層の DB トランザクションが確定した後に送る。** トランザクション内で
+  `->notify()` すると、ロールバックされた場合でもキューにジョブが残ってしまう
+  (`database` キューは同じ DB 接続のトランザクションに含まれないため)。
+- **メディア名・ロゴの反映は個々の通知クラスではなく、共通の Markdown メール
+  テンプレート側で行った。** 各通知クラスに `$site->site_name` を埋め込むコードを
+  書かなくても、`ThemeServiceProvider` が既に全ビューへ `$site` を共有している
+  仕組みにそのまま乗れたため、テーマ機構(CLAUDE.md 3.2)と同じ設計原則を
+  メール本文にも適用できた。
+- **失敗ジョブのテストは 127.0.0.1 の未使用ポートへの接続失敗を利用した。**
+  存在しないホスト名を使うと DNS 解決待ちで時間がかかる場合があるが、
+  ループバックアドレスの未 listen ポートは即座に接続拒否されるため、
+  実行時間を延ばさずに確実な失敗を再現できる。
 
 ---
 

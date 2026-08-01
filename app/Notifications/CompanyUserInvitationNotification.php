@@ -13,8 +13,9 @@ use Illuminate\Notifications\Notification;
  * メールは平文で保管・転送されるため、パスワードを本文に書くと
  * 受信箱に残り続ける。パスワード再設定と同じトークンの仕組みを使う。
  *
- * 招待は運営者の操作で送られるため即時性が求められる。
- * T-15 でキュー運用を整えるまでは同期送信とする。
+ * **意図的にキューに載せていない。** `ResetPasswordNotification` と同じ理由で、
+ * 招待は運営者がその場で担当者に伝えるユースケースが多く、キュー経由で
+ * 最大 1 分待たされると体験が悪い。T-15 でキュー運用を整えた後も同期送信のまま残す。
  */
 class CompanyUserInvitationNotification extends Notification
 {

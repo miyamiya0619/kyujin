@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\AdminUser;
 use App\Models\JobPosting;
 use App\Models\JobPostingReview;
+use App\Notifications\JobPostingApprovedNotification;
 use App\Notifications\JobPostingRejectedNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -37,6 +38,11 @@ class ReviewJobPostingService
                 'action' => JobPostingReview::ACTION_APPROVED,
             ]);
         });
+
+        // 掲載企業の全担当者へ通知する(誰が対応するかは企業側の運用に委ねる)
+        foreach ($jobPosting->company->users()->where('is_active', true)->get() as $companyUser) {
+            $companyUser->notify(new JobPostingApprovedNotification($jobPosting));
+        }
 
         return $jobPosting->fresh();
     }

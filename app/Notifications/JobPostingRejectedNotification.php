@@ -5,16 +5,18 @@ namespace App\Notifications;
 use App\Models\JobPosting;
 use App\Models\SiteSetting;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
  * 求人が差戻しされたことを掲載企業へ通知する。
  *
- * キュー経由で送る(T-15 で本格的なキュー運用を整える)。
- * 本番は cron 経由のため最大 1 分遅れるが、差戻しは即時性より確実な到達を優先する。
+ * キュー経由で送る(TASKS.md T-15)。本番は cron から毎分
+ * `queue:work --stop-when-empty` を実行する運用のため、最大 1 分遅れて届く。
+ * 差戻しは即時性より確実な到達を優先するため、この遅延を許容する。
  */
-class JobPostingRejectedNotification extends Notification
+class JobPostingRejectedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Application;
 use App\Models\ApplicationStatusLog;
 use App\Models\CompanyUser;
+use App\Notifications\ApplicationStatusChangedNotification;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -18,6 +19,8 @@ class ChangeApplicationStatusService
 {
     public function change(Application $application, string $toStatus, CompanyUser $companyUser): Application
     {
+        $fromStatus = $application->status;
+
         DB::transaction(function () use ($application, $toStatus, $companyUser) {
             ApplicationStatusLog::create([
                 'application_id' => $application->id,
@@ -29,6 +32,13 @@ class ChangeApplicationStatusService
             $application->update(['status' => $toStatus]);
         });
 
-        return $application->fresh();
+        $application = $application->fresh();
+
+        // 実質的な変化がない(同じステータスへの再設定)場合は求職者に通知しない。
+        if ($fromStatus !== $toStatus) {
+            $application->jobSeeker->notify(new ApplicationStatusChangedNotification($application, $toStatus));
+        }
+
+        return $application;
     }
 }
