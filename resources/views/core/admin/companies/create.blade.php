@@ -9,7 +9,7 @@
     <h1 class="text-xl font-bold">掲載企業の追加</h1>
 
     <form method="POST" action="{{ route('admin.companies.store') }}" enctype="multipart/form-data"
-          class="mt-6 max-w-2xl rounded border border-gray-200 bg-white p-6">
+          class="mt-6 max-w-2xl rounded border border-[var(--border)] bg-[var(--surface)] p-6">
         @csrf
         <input type="hidden" name="status" value="active">
 
@@ -20,7 +20,7 @@
                     style="background-color: var(--theme-color)">
                 登録する
             </button>
-            <a href="{{ route('admin.companies.index') }}" class="text-sm text-gray-600 hover:underline">キャンセル</a>
+            <a href="{{ route('admin.companies.index') }}" class="text-sm text-[var(--ink-soft)] hover:underline">キャンセル</a>
         </div>
     </form>
 @endsection

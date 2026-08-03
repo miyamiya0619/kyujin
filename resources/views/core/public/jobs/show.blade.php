@@ -11,22 +11,22 @@
 
 @section('content')
     <section class="mx-auto max-w-3xl px-4 py-8">
-        <nav class="text-xs text-gray-500">
+        <nav class="text-xs text-[var(--muted)]">
             <a href="{{ route('public.jobs.index') }}" class="hover:underline">求人を探す</a>
             <span class="mx-1">/</span>
             <span>{{ $jobPosting->title }}</span>
         </nav>
 
-        <div class="mt-4 rounded border border-gray-200 bg-white p-6">
+        <div class="mt-4 rounded border border-[var(--border)] bg-[var(--surface)] p-6">
             @if ($jobPosting->is_featured)
-                <span class="inline-block rounded bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
+                <span class="inline-block rounded bg-[var(--warning-bg)] px-2 py-0.5 text-xs font-medium text-[var(--warning)]">
                     おすすめ
                 </span>
             @endif
 
             <h1 class="mt-2 text-2xl font-bold">{{ $jobPosting->title }}</h1>
 
-            <p class="mt-2 text-sm text-gray-600">
+            <p class="mt-2 text-sm text-[var(--ink-soft)]">
                 <a href="{{ route('public.companies.show', $jobPosting->company) }}" class="hover:underline">
                     {{ $jobPosting->company->name }}
                 </a>
@@ -35,7 +35,7 @@
 
             <div class="mt-6">
                 @if ($hasApplied)
-                    <span class="inline-block rounded border border-gray-300 px-6 py-3 text-sm font-semibold text-gray-500">
+                    <span class="inline-block rounded border border-[var(--border)] px-6 py-3 text-sm font-semibold text-[var(--muted)]">
                         応募済みです
                     </span>
                 @else
@@ -47,9 +47,9 @@
                 @endif
             </div>
 
-            <dl class="mt-6 grid grid-cols-1 gap-4 border-t border-gray-100 pt-6 sm:grid-cols-2">
+            <dl class="mt-6 grid grid-cols-1 gap-4 border-t border-[var(--border)] pt-6 sm:grid-cols-2">
                 <div>
-                    <dt class="text-xs text-gray-500">給与</dt>
+                    <dt class="text-xs text-[var(--muted)]">給与</dt>
                     <dd class="mt-1">
                         @if ($jobPosting->salary_min || $jobPosting->salary_max)
                             @if ($jobPosting->salary_type === 'monthly') 月給
@@ -66,41 +66,41 @@
                 </div>
 
                 <div>
-                    <dt class="text-xs text-gray-500">雇用形態</dt>
+                    <dt class="text-xs text-[var(--muted)]">雇用形態</dt>
                     <dd class="mt-1">{{ $jobPosting->employmentType?->name ?? '未設定' }}</dd>
                 </div>
 
                 <div>
-                    <dt class="text-xs text-gray-500">職種</dt>
+                    <dt class="text-xs text-[var(--muted)]">職種</dt>
                     <dd class="mt-1">{{ $jobPosting->jobCategory?->name ?? '未設定' }}</dd>
                 </div>
 
                 <div>
-                    <dt class="text-xs text-gray-500">夜勤</dt>
+                    <dt class="text-xs text-[var(--muted)]">夜勤</dt>
                     <dd class="mt-1">{{ $jobPosting->has_night_shift ? 'あり' : 'なし' }}</dd>
                 </div>
 
                 @if ($jobPosting->working_hours)
                     <div>
-                        <dt class="text-xs text-gray-500">勤務時間</dt>
+                        <dt class="text-xs text-[var(--muted)]">勤務時間</dt>
                         <dd class="mt-1 whitespace-pre-line">{{ $jobPosting->working_hours }}</dd>
                     </div>
                 @endif
 
                 @if ($jobPosting->holidays)
                     <div>
-                        <dt class="text-xs text-gray-500">休日・休暇</dt>
+                        <dt class="text-xs text-[var(--muted)]">休日・休暇</dt>
                         <dd class="mt-1 whitespace-pre-line">{{ $jobPosting->holidays }}</dd>
                     </div>
                 @endif
             </dl>
 
             @if ($jobPosting->qualifications->isNotEmpty())
-                <div class="mt-6 border-t border-gray-100 pt-6">
-                    <p class="text-xs text-gray-500">必要資格</p>
+                <div class="mt-6 border-t border-[var(--border)] pt-6">
+                    <p class="text-xs text-[var(--muted)]">必要資格</p>
                     <div class="mt-2 flex flex-wrap gap-2">
                         @foreach ($jobPosting->qualifications as $qualification)
-                            <span class="rounded bg-gray-100 px-2 py-1 text-xs">{{ $qualification->name }}</span>
+                            <span class="rounded bg-[var(--bg)] px-2 py-1 text-xs">{{ $qualification->name }}</span>
                         @endforeach
                     </div>
                 </div>
@@ -108,31 +108,31 @@
 
             @if ($jobPosting->features->isNotEmpty())
                 <div class="mt-4">
-                    <p class="text-xs text-gray-500">こだわり条件</p>
+                    <p class="text-xs text-[var(--muted)]">こだわり条件</p>
                     <div class="mt-2 flex flex-wrap gap-2">
                         @foreach ($jobPosting->features as $feature)
-                            <span class="rounded bg-gray-100 px-2 py-1 text-xs">{{ $feature->name }}</span>
+                            <span class="rounded bg-[var(--bg)] px-2 py-1 text-xs">{{ $feature->name }}</span>
                         @endforeach
                     </div>
                 </div>
             @endif
 
             @if ($jobPosting->description)
-                <div class="mt-6 border-t border-gray-100 pt-6">
-                    <p class="text-xs text-gray-500">仕事内容</p>
+                <div class="mt-6 border-t border-[var(--border)] pt-6">
+                    <p class="text-xs text-[var(--muted)]">仕事内容</p>
                     <p class="mt-2 whitespace-pre-line text-sm">{{ $jobPosting->description }}</p>
                 </div>
             @endif
 
             @if ($jobPosting->benefits)
-                <div class="mt-6 border-t border-gray-100 pt-6">
-                    <p class="text-xs text-gray-500">待遇・福利厚生</p>
+                <div class="mt-6 border-t border-[var(--border)] pt-6">
+                    <p class="text-xs text-[var(--muted)]">待遇・福利厚生</p>
                     <p class="mt-2 whitespace-pre-line text-sm">{{ $jobPosting->benefits }}</p>
                 </div>
             @endif
 
-            <div class="mt-6 border-t border-gray-100 pt-6">
-                <p class="text-xs text-gray-500">勤務地</p>
+            <div class="mt-6 border-t border-[var(--border)] pt-6">
+                <p class="text-xs text-[var(--muted)]">勤務地</p>
                 <p class="mt-2 text-sm">
                     {{ $jobPosting->workplace->locationLabel() }}{{ $jobPosting->workplace->address }}
                     @if ($jobPosting->workplace->access)
@@ -141,14 +141,14 @@
                 </p>
                 @if ($jobPosting->workplace->photo_path)
                     <img src="{{ $jobPosting->workplace->photoUrl() }}" alt="{{ $jobPosting->workplace->name }}"
-                         loading="lazy" class="mt-3 max-h-64 rounded border border-gray-200 object-cover">
+                         loading="lazy" class="mt-3 max-h-64 rounded border border-[var(--border)] object-cover">
                 @endif
             </div>
         </div>
 
         @if ($relatedJobPostings->isNotEmpty())
             <div class="mt-8">
-                <h2 class="text-sm font-semibold text-gray-700">{{ $jobPosting->company->name }} の他の求人</h2>
+                <h2 class="text-sm font-semibold text-[var(--ink-soft)]">{{ $jobPosting->company->name }} の他の求人</h2>
                 <div class="mt-3 grid gap-3 sm:grid-cols-2">
                     @foreach ($relatedJobPostings as $related)
                         <x-job-posting-card :job-posting="$related" />

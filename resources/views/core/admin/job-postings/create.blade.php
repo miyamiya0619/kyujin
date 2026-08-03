@@ -6,14 +6,14 @@
 @section('logout-url', route('admin.logout'))
 
 @section('content')
-    <a href="{{ route('admin.companies.job-postings.index', $company) }}" class="text-sm text-gray-600 hover:underline">
+    <a href="{{ route('admin.companies.job-postings.index', $company) }}" class="text-sm text-[var(--ink-soft)] hover:underline">
         &laquo; {{ $company->name }} の求人一覧
     </a>
 
     <h1 class="mt-1 text-xl font-bold">求人の代行入稿</h1>
 
     <form method="POST" action="{{ route('admin.companies.job-postings.store', $company) }}"
-          class="mt-6 max-w-2xl rounded border border-gray-200 bg-white p-6">
+          class="mt-6 max-w-2xl rounded border border-[var(--border)] bg-[var(--surface)] p-6">
         @csrf
 
         <x-job-posting-form-fields
@@ -31,7 +31,7 @@
                     style="background-color: var(--theme-color)">
                 下書きとして保存する
             </button>
-            <a href="{{ route('admin.companies.job-postings.index', $company) }}" class="text-sm text-gray-600 hover:underline">
+            <a href="{{ route('admin.companies.job-postings.index', $company) }}" class="text-sm text-[var(--ink-soft)] hover:underline">
                 キャンセル
             </a>
         </div>

@@ -8,7 +8,7 @@
 @section('content')
     <div class="flex items-center justify-between">
         <div>
-            <a href="{{ route('admin.companies.show', $company) }}" class="text-sm text-gray-600 hover:underline">
+            <a href="{{ route('admin.companies.show', $company) }}" class="text-sm text-[var(--ink-soft)] hover:underline">
                 &laquo; {{ $company->name }}
             </a>
             <h1 class="mt-1 text-xl font-bold">事業所</h1>
@@ -22,14 +22,14 @@
     </div>
 
     @if (session('error'))
-        <div class="mt-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <div class="mt-4 rounded border border-[var(--danger)] bg-[var(--danger-bg)] px-4 py-3 text-sm text-[var(--danger)]">
             {{ session('error') }}
         </div>
     @endif
 
-    <div class="mt-6 overflow-x-auto rounded border border-gray-200 bg-white">
+    <div class="mt-6 overflow-x-auto rounded border border-[var(--border)] bg-[var(--surface)]">
         <table class="w-full text-sm">
-            <thead class="border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-600">
+            <thead class="border-b border-[var(--border)] bg-[var(--bg)] text-left text-xs text-[var(--ink-soft)]">
                 <tr>
                     <th class="px-4 py-3">事業所名</th>
                     <th class="px-4 py-3">施設形態</th>
@@ -37,16 +37,16 @@
                     <th class="px-4 py-3"></th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody class="divide-y divide-[var(--border)]">
                 @forelse ($workplaces as $workplace)
                     <tr>
                         <td class="px-4 py-3 font-medium">{{ $workplace->name }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ $workplace->facilityType?->displayName() }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ $workplace->locationLabel() }}</td>
+                        <td class="px-4 py-3 text-[var(--ink-soft)]">{{ $workplace->facilityType?->displayName() }}</td>
+                        <td class="px-4 py-3 text-[var(--ink-soft)]">{{ $workplace->locationLabel() }}</td>
                         <td class="px-4 py-3 text-right">
                             <div class="flex justify-end gap-3">
                                 <a href="{{ route('admin.companies.workplaces.edit', [$company, $workplace]) }}"
-                                   class="text-gray-600 hover:underline">編集</a>
+                                   class="text-[var(--ink-soft)] hover:underline">編集</a>
                                 <form method="POST" action="{{ route('admin.companies.workplaces.destroy', [$company, $workplace]) }}"
                                       onsubmit="return confirm('この事業所を削除しますか?')">
                                     @csrf
@@ -58,7 +58,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-4 py-8 text-center text-gray-500">
+                        <td colspan="4" class="px-4 py-8 text-center text-[var(--muted)]">
                             事業所がまだ登録されていません。
                         </td>
                     </tr>

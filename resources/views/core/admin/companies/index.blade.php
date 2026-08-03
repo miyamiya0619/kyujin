@@ -18,14 +18,14 @@
 
     <form method="GET" class="mt-6 flex flex-wrap items-end gap-3">
         <div>
-            <label for="keyword" class="block text-xs text-gray-600">企業名で絞り込む</label>
+            <label for="keyword" class="block text-xs text-[var(--ink-soft)]">企業名で絞り込む</label>
             <input id="keyword" name="keyword" value="{{ $keyword }}"
-                   class="mt-1 rounded border border-gray-300 px-3 py-2 text-sm">
+                   class="mt-1 rounded border border-[var(--border)] px-3 py-2 text-sm">
         </div>
 
         <div>
-            <label for="status" class="block text-xs text-gray-600">ステータス</label>
-            <select id="status" name="status" class="mt-1 rounded border border-gray-300 bg-white px-3 py-2 text-sm">
+            <label for="status" class="block text-xs text-[var(--ink-soft)]">ステータス</label>
+            <select id="status" name="status" class="mt-1 rounded border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm">
                 <option value="">すべて</option>
                 <option value="active" @selected($status === 'active')>掲載中</option>
                 <option value="suspended" @selected($status === 'suspended')>停止中</option>
@@ -33,12 +33,12 @@
             </select>
         </div>
 
-        <button type="submit" class="rounded border border-gray-300 bg-white px-4 py-2 text-sm">絞り込む</button>
+        <button type="submit" class="rounded border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm">絞り込む</button>
     </form>
 
-    <div class="mt-6 overflow-x-auto rounded border border-gray-200 bg-white">
+    <div class="mt-6 overflow-x-auto rounded border border-[var(--border)] bg-[var(--surface)]">
         <table class="w-full text-sm">
-            <thead class="border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-600">
+            <thead class="border-b border-[var(--border)] bg-[var(--bg)] text-left text-xs text-[var(--ink-soft)]">
                 <tr>
                     <th class="px-4 py-3">企業名</th>
                     <th class="px-4 py-3">ステータス</th>
@@ -46,7 +46,7 @@
                     <th class="px-4 py-3"></th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody class="divide-y divide-[var(--border)]">
                 @forelse ($companies as $company)
                     <tr>
                         <td class="px-4 py-3">
@@ -57,14 +57,14 @@
                         <td class="px-4 py-3">
                             <x-company-status-badge :status="$company->status" />
                         </td>
-                        <td class="px-4 py-3 text-gray-600">{{ $company->users_count }} 名</td>
+                        <td class="px-4 py-3 text-[var(--ink-soft)]">{{ $company->users_count }} 名</td>
                         <td class="px-4 py-3 text-right">
-                            <a href="{{ route('admin.companies.edit', $company) }}" class="text-gray-600 hover:underline">編集</a>
+                            <a href="{{ route('admin.companies.edit', $company) }}" class="text-[var(--ink-soft)] hover:underline">編集</a>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-4 py-8 text-center text-gray-500">
+                        <td colspan="4" class="px-4 py-8 text-center text-[var(--muted)]">
                             掲載企業がまだ登録されていません。
                         </td>
                     </tr>

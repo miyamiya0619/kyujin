@@ -53,9 +53,9 @@
     <x-form.field name="photo" label="施設写真" help="JPEG・PNG・WebP、5MB まで。">
         @if ($workplace->photo_path)
             <img src="{{ $workplace->photoUrl() }}" alt="現在の施設写真"
-                 class="mt-2 h-32 rounded border border-gray-200 object-cover">
+                 class="mt-2 h-32 rounded border border-[var(--border)] object-cover">
         @endif
         <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp"
-               class="mt-2 block w-full text-sm text-gray-700">
+               class="mt-2 block w-full text-sm text-[var(--ink-soft)]">
     </x-form.field>
 </div>

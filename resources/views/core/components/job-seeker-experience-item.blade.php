@@ -4,8 +4,8 @@
 --}}
 @props(['experience', 'isFirst' => false, 'isLast' => false])
 
-<div class="rounded border border-gray-200 p-4" data-experience-id="{{ $experience->id }}">
-    <div class="mb-2 flex justify-end gap-2 text-xs text-gray-500">
+<div class="rounded border border-[var(--border)] p-4" data-experience-id="{{ $experience->id }}">
+    <div class="mb-2 flex justify-end gap-2 text-xs text-[var(--muted)]">
         <button type="button" class="js-move-up disabled:opacity-30" @disabled($isFirst)>↑ 上へ</button>
         <button type="button" class="js-move-down disabled:opacity-30" @disabled($isLast)>↓ 下へ</button>
     </div>
@@ -31,10 +31,10 @@
             <x-form.field name="ended_on" label="在籍終了年月">
                 <x-form.input name="ended_on" type="date" :value="$experience->ended_on?->toDateString()"
                               @if ($experience->isCurrent()) disabled @endif />
-                <label class="mt-1 flex items-center gap-2 text-xs text-gray-600">
+                <label class="mt-1 flex items-center gap-2 text-xs text-[var(--ink-soft)]">
                     <input type="checkbox" name="is_current" value="1" @checked($experience->isCurrent())
                            onchange="this.closest('form').querySelector('[name=ended_on]').disabled = this.checked"
-                           class="rounded border-gray-300">
+                           class="rounded border-[var(--border)]">
                     在籍中
                 </label>
             </x-form.field>

@@ -6,7 +6,7 @@
 @section('logout-url', route('admin.logout'))
 
 @section('content')
-    <a href="{{ route('admin.companies.job-postings.index', $company) }}" class="text-sm text-gray-600 hover:underline">
+    <a href="{{ route('admin.companies.job-postings.index', $company) }}" class="text-sm text-[var(--ink-soft)] hover:underline">
         &laquo; {{ $company->name }} の求人一覧
     </a>
 
@@ -16,13 +16,13 @@
     </div>
 
     @if ($jobPosting->status === 'published')
-        <p class="mt-2 text-xs text-yellow-700">
+        <p class="mt-2 text-xs text-[var(--warning)]">
             公開中の求人を編集すると、審査待ちに戻ります。
         </p>
     @endif
 
     <form method="POST" action="{{ route('admin.companies.job-postings.update', [$company, $jobPosting]) }}"
-          class="mt-6 max-w-2xl rounded border border-gray-200 bg-white p-6">
+          class="mt-6 max-w-2xl rounded border border-[var(--border)] bg-[var(--surface)] p-6">
         @csrf
         @method('PUT')
 
@@ -41,7 +41,7 @@
                     style="background-color: var(--theme-color)">
                 更新する
             </button>
-            <a href="{{ route('admin.companies.job-postings.index', $company) }}" class="text-sm text-gray-600 hover:underline">
+            <a href="{{ route('admin.companies.job-postings.index', $company) }}" class="text-sm text-[var(--ink-soft)] hover:underline">
                 キャンセル
             </a>
         </div>

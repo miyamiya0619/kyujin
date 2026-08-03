@@ -65,7 +65,7 @@
         <label class="mt-1 flex items-center gap-2 text-sm">
             <input type="checkbox" name="has_night_shift" value="1"
                    @checked(old('has_night_shift', $jobPosting->has_night_shift))
-                   class="rounded border-gray-300">
+                   class="rounded border-[var(--border)]">
             夜勤あり
         </label>
     </x-form.field>
@@ -105,7 +105,7 @@
         <label class="mt-1 flex items-center gap-2 text-sm">
             <input type="checkbox" name="allow_external_feed" value="1"
                    @checked(old('allow_external_feed', $jobPosting->allow_external_feed))
-                   class="rounded border-gray-300">
+                   class="rounded border-[var(--border)]">
             配信を許可する
         </label>
     </x-form.field>

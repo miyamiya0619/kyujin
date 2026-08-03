@@ -6,16 +6,16 @@
 @section('logout-url', route('admin.logout'))
 
 @section('content')
-    <a href="{{ route('admin.masters.home') }}" class="text-sm text-gray-600 hover:underline">&laquo; マスタ管理</a>
+    <a href="{{ route('admin.masters.home') }}" class="text-sm text-[var(--ink-soft)] hover:underline">&laquo; マスタ管理</a>
 
     <h1 class="mt-1 text-xl font-bold">{{ $label }}</h1>
-    <p class="mt-1 text-sm text-gray-600">
+    <p class="mt-1 text-sm text-[var(--ink-soft)]">
         「↑」「↓」で並び順を変更できます。無効にした項目は入力画面・検索画面の選択肢に出なくなります。
     </p>
 
-    <div class="mt-6 overflow-x-auto rounded border border-gray-200 bg-white">
+    <div class="mt-6 overflow-x-auto rounded border border-[var(--border)] bg-[var(--surface)]">
         <table class="w-full text-sm">
-            <thead class="border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-600">
+            <thead class="border-b border-[var(--border)] bg-[var(--bg)] text-left text-xs text-[var(--ink-soft)]">
                 <tr>
                     <th class="px-4 py-3">名称</th>
                     @if ($hasCategory)
@@ -26,25 +26,25 @@
                     <th class="px-4 py-3"></th>
                 </tr>
             </thead>
-            <tbody id="master-list" class="divide-y divide-gray-100">
+            <tbody id="master-list" class="divide-y divide-[var(--border)]">
                 @forelse ($rows as $row)
                     <tr data-master-id="{{ $row->id }}">
                         <td class="px-4 py-3 font-medium">{{ $row->name }}</td>
                         @if ($hasCategory)
-                            <td class="px-4 py-3 text-gray-600">{{ $row->category }}</td>
+                            <td class="px-4 py-3 text-[var(--ink-soft)]">{{ $row->category }}</td>
                         @endif
-                        <td class="px-4 py-3 font-mono text-xs text-gray-500">{{ $row->code }}</td>
+                        <td class="px-4 py-3 font-mono text-xs text-[var(--muted)]">{{ $row->code }}</td>
                         <td class="px-4 py-3">
                             @if ($row->is_enabled)
-                                <span class="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">有効</span>
+                                <span class="rounded bg-[var(--success-bg)] px-2 py-1 text-xs font-medium text-[var(--success)]">有効</span>
                             @else
-                                <span class="rounded bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">無効</span>
+                                <span class="rounded bg-[var(--bg)] px-2 py-1 text-xs font-medium text-[var(--ink-soft)]">無効</span>
                             @endif
                         </td>
                         <td class="px-4 py-3 text-right">
                             <div class="flex items-center justify-end gap-3">
-                                <button type="button" class="js-move-up text-xs text-gray-500 disabled:opacity-30" @disabled($loop->first)>↑</button>
-                                <button type="button" class="js-move-down text-xs text-gray-500 disabled:opacity-30" @disabled($loop->last)>↓</button>
+                                <button type="button" class="js-move-up text-xs text-[var(--muted)] disabled:opacity-30" @disabled($loop->first)>↑</button>
+                                <button type="button" class="js-move-down text-xs text-[var(--muted)] disabled:opacity-30" @disabled($loop->last)>↓</button>
                                 <form method="POST" action="{{ route('admin.masters.toggle', [$type, $row]) }}">
                                     @csrf
                                     <button type="submit" class="font-medium hover:underline" style="color: var(--theme-color)">
@@ -56,7 +56,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-500">項目がありません。</td>
+                        <td colspan="5" class="px-4 py-8 text-center text-[var(--muted)]">項目がありません。</td>
                     </tr>
                 @endforelse
             </tbody>

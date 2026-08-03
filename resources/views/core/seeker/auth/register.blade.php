@@ -30,6 +30,6 @@
     </form>
 
     <p class="mt-4 text-center text-sm">
-        <a href="{{ route('seeker.login') }}" class="text-gray-600 hover:underline">すでに会員の方はこちら</a>
+        <a href="{{ route('seeker.login') }}" class="text-[var(--ink-soft)] hover:underline">すでに会員の方はこちら</a>
     </p>
 </x-auth-page>

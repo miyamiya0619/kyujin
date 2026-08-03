@@ -2,17 +2,17 @@
 @props(['name', 'label', 'required' => false, 'help' => null])
 
 <div>
-    <label for="{{ $name }}" class="block text-sm font-medium text-gray-700">
+    <label for="{{ $name }}" class="block text-sm font-medium text-[var(--ink-soft)]">
         {{ $label }}
         @if ($required)
-            <span class="ml-1 rounded bg-red-100 px-1 text-xs text-red-700">必須</span>
+            <span class="ml-1 rounded bg-[var(--danger-bg)] px-1 text-xs text-[var(--danger)]">必須</span>
         @endif
     </label>
 
     {{ $slot }}
 
     @if ($help)
-        <p class="mt-1 text-xs text-gray-500">{{ $help }}</p>
+        <p class="mt-1 text-xs text-[var(--muted)]">{{ $help }}</p>
     @endif
 
     @error($name)

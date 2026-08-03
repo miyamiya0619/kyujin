@@ -29,7 +29,7 @@
             <input type="hidden" name="is_featured" value="0">
             <input type="checkbox" name="is_featured" value="1"
                    @checked(old('is_featured', $postingPlan->is_featured))
-                   class="rounded border-gray-300">
+                   class="rounded border-[var(--border)]">
             このプランの求人を検索結果で優先表示する
         </label>
     </x-form.field>
@@ -39,7 +39,7 @@
             <input type="hidden" name="is_enabled" value="0">
             <input type="checkbox" name="is_enabled" value="1"
                    @checked(old('is_enabled', $postingPlan->is_enabled ?? true))
-                   class="rounded border-gray-300">
+                   class="rounded border-[var(--border)]">
             有効(無効にすると新規割当の選択肢に出なくなります)
         </label>
     </x-form.field>

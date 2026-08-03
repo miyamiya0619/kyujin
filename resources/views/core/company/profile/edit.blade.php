@@ -8,12 +8,12 @@
 @section('content')
     <h1 class="text-xl font-bold">企業情報</h1>
 
-    <p class="mt-2 text-sm text-gray-600">
+    <p class="mt-2 text-sm text-[var(--ink-soft)]">
         ここで登録した内容は、求人ページの企業紹介に表示されます。
     </p>
 
     <form method="POST" action="{{ route('company.profile.update') }}" enctype="multipart/form-data"
-          class="mt-6 max-w-2xl rounded border border-gray-200 bg-white p-6">
+          class="mt-6 max-w-2xl rounded border border-[var(--border)] bg-[var(--surface)] p-6">
         @csrf
         @method('PUT')
 

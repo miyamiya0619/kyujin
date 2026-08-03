@@ -57,9 +57,9 @@
     <x-form.field name="logo" label="ロゴ画像" help="JPEG・PNG・WebP、5MB まで。アップロード時に自動で WebP に変換されます。">
         @if ($company->logo_path)
             <img src="{{ \App\Services\ImageUploadService::url($company->logo_path) }}"
-                 alt="現在のロゴ" class="mt-2 h-16 rounded border border-gray-200 bg-white p-1">
+                 alt="現在のロゴ" class="mt-2 h-16 rounded border border-[var(--border)] bg-[var(--surface)] p-1">
         @endif
         <input id="logo" name="logo" type="file" accept="image/jpeg,image/png,image/webp"
-               class="mt-2 block w-full text-sm text-gray-700">
+               class="mt-2 block w-full text-sm text-[var(--ink-soft)]">
     </x-form.field>
 </div>

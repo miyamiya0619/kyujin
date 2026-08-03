@@ -15,13 +15,13 @@
         </h1>
 
         <a href="{{ route('company.applications.export', request()->query()) }}"
-           class="rounded border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+           class="rounded border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--ink-soft)] hover:bg-[var(--bg)]">
             CSV 出力
         </a>
     </div>
 
     <form method="GET" action="{{ route('company.applications.index') }}"
-          class="mt-6 grid gap-4 rounded border border-gray-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-4">
+          class="mt-6 grid gap-4 rounded border border-[var(--border)] bg-[var(--surface)] p-4 sm:grid-cols-2 lg:grid-cols-4">
         <x-form.field name="status" label="選考ステータス">
             <x-form.select name="status" :value="request('status')" :options="$statusOptions" />
         </x-form.field>
@@ -59,13 +59,13 @@
                     style="background-color: var(--theme-color)">
                 絞り込む
             </button>
-            <a href="{{ route('company.applications.index') }}" class="text-sm text-gray-600 hover:underline">条件をクリア</a>
+            <a href="{{ route('company.applications.index') }}" class="text-sm text-[var(--ink-soft)] hover:underline">条件をクリア</a>
         </div>
     </form>
 
-    <div class="mt-6 overflow-x-auto rounded border border-gray-200 bg-white">
+    <div class="mt-6 overflow-x-auto rounded border border-[var(--border)] bg-[var(--surface)]">
         <table class="w-full text-sm">
-            <thead class="border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-600">
+            <thead class="border-b border-[var(--border)] bg-[var(--bg)] text-left text-xs text-[var(--ink-soft)]">
                 <tr>
                     <th class="px-4 py-3">求人</th>
                     <th class="px-4 py-3">事業所</th>
@@ -75,13 +75,13 @@
                     <th class="px-4 py-3"></th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody class="divide-y divide-[var(--border)]">
                 @forelse ($applications as $application)
                     <tr>
                         <td class="px-4 py-3 font-medium">{{ $application->jobPosting->title }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ $application->jobPosting->workplace->name }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ $application->applied_at->format('Y/m/d') }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ $application->referrer_source }}</td>
+                        <td class="px-4 py-3 text-[var(--ink-soft)]">{{ $application->jobPosting->workplace->name }}</td>
+                        <td class="px-4 py-3 text-[var(--ink-soft)]">{{ $application->applied_at->format('Y/m/d') }}</td>
+                        <td class="px-4 py-3 text-[var(--ink-soft)]">{{ $application->referrer_source }}</td>
                         <td class="px-4 py-3"><x-application-status-badge :status="$application->status" /></td>
                         <td class="px-4 py-3 text-right">
                             <a href="{{ route('company.applications.show', $application) }}"
@@ -92,7 +92,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                        <td colspan="6" class="px-4 py-8 text-center text-[var(--muted)]">
                             該当する応募者がいません。
                         </td>
                     </tr>

@@ -6,12 +6,12 @@
 @section('logout-url', route('admin.logout'))
 
 @section('content')
-    <a href="{{ route('admin.posting-plans.index') }}" class="text-sm text-gray-600 hover:underline">&laquo; 掲載プラン一覧</a>
+    <a href="{{ route('admin.posting-plans.index') }}" class="text-sm text-[var(--ink-soft)] hover:underline">&laquo; 掲載プラン一覧</a>
 
     <h1 class="mt-1 text-xl font-bold">掲載プランの追加</h1>
 
     <form method="POST" action="{{ route('admin.posting-plans.store') }}"
-          class="mt-6 max-w-2xl rounded border border-gray-200 bg-white p-6">
+          class="mt-6 max-w-2xl rounded border border-[var(--border)] bg-[var(--surface)] p-6">
         @csrf
 
         <x-posting-plan-form-fields :posting-plan="$postingPlan" />
@@ -21,7 +21,7 @@
                     style="background-color: var(--theme-color)">
                 作成する
             </button>
-            <a href="{{ route('admin.posting-plans.index') }}" class="text-sm text-gray-600 hover:underline">キャンセル</a>
+            <a href="{{ route('admin.posting-plans.index') }}" class="text-sm text-[var(--ink-soft)] hover:underline">キャンセル</a>
         </div>
     </form>
 @endsection

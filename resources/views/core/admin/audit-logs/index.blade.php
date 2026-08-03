@@ -7,12 +7,12 @@
 
 @section('content')
     <h1 class="text-xl font-bold">監査ログ</h1>
-    <p class="mt-1 text-sm text-gray-600">
+    <p class="mt-1 text-sm text-[var(--ink-soft)]">
         審査の承認/差戻し・応募者情報の閲覧/CSV出力・掲載プランの変更・サイト設定の変更などの操作履歴です。
     </p>
 
     <form method="GET" action="{{ route('admin.audit-logs.index') }}"
-          class="mt-6 grid gap-4 rounded border border-gray-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-4">
+          class="mt-6 grid gap-4 rounded border border-[var(--border)] bg-[var(--surface)] p-4 sm:grid-cols-2 lg:grid-cols-4">
         <x-form.field name="actor_type" label="操作者の種別">
             <x-form.select name="actor_type" :value="request('actor_type')" :options="[
                 'admin' => '運営者',
@@ -38,13 +38,13 @@
                     style="background-color: var(--theme-color)">
                 絞り込む
             </button>
-            <a href="{{ route('admin.audit-logs.index') }}" class="text-sm text-gray-600 hover:underline">条件をクリア</a>
+            <a href="{{ route('admin.audit-logs.index') }}" class="text-sm text-[var(--ink-soft)] hover:underline">条件をクリア</a>
         </div>
     </form>
 
-    <div class="mt-6 overflow-x-auto rounded border border-gray-200 bg-white">
+    <div class="mt-6 overflow-x-auto rounded border border-[var(--border)] bg-[var(--surface)]">
         <table class="w-full text-sm">
-            <thead class="border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-600">
+            <thead class="border-b border-[var(--border)] bg-[var(--bg)] text-left text-xs text-[var(--ink-soft)]">
                 <tr>
                     <th class="px-4 py-3">日時</th>
                     <th class="px-4 py-3">操作者</th>
@@ -53,18 +53,18 @@
                     <th class="px-4 py-3">IP アドレス</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody class="divide-y divide-[var(--border)]">
                 @forelse ($logs as $log)
                     <tr>
-                        <td class="px-4 py-3 text-gray-600">{{ $log->created_at->format('Y/m/d H:i:s') }}</td>
+                        <td class="px-4 py-3 text-[var(--ink-soft)]">{{ $log->created_at->format('Y/m/d H:i:s') }}</td>
                         <td class="px-4 py-3">{{ $log->actorLabel() }}({{ $log->actor_type }})</td>
                         <td class="px-4 py-3 font-mono text-xs">{{ $log->action }}</td>
-                        <td class="px-4 py-3 text-gray-600">{{ $log->targetLabel() ?? '-' }}</td>
-                        <td class="px-4 py-3 text-gray-500">{{ $log->ip_address ?? '-' }}</td>
+                        <td class="px-4 py-3 text-[var(--ink-soft)]">{{ $log->targetLabel() ?? '-' }}</td>
+                        <td class="px-4 py-3 text-[var(--muted)]">{{ $log->ip_address ?? '-' }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-4 py-8 text-center text-gray-500">該当するログがありません。</td>
+                        <td colspan="5" class="px-4 py-8 text-center text-[var(--muted)]">該当するログがありません。</td>
                     </tr>
                 @endforelse
             </tbody>

@@ -16,9 +16,9 @@
         </a>
     </div>
 
-    <div class="mt-6 overflow-x-auto rounded border border-gray-200 bg-white">
+    <div class="mt-6 overflow-x-auto rounded border border-[var(--border)] bg-[var(--surface)]">
         <table class="w-full text-sm">
-            <thead class="border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-600">
+            <thead class="border-b border-[var(--border)] bg-[var(--bg)] text-left text-xs text-[var(--ink-soft)]">
                 <tr>
                     <th class="px-4 py-3">プラン名</th>
                     <th class="px-4 py-3">同時掲載件数</th>
@@ -29,9 +29,9 @@
                     <th class="px-4 py-3"></th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody class="divide-y divide-[var(--border)]">
                 @forelse ($postingPlans as $plan)
-                    <tr class="{{ $plan->is_enabled ? '' : 'text-gray-400' }}">
+                    <tr class="{{ $plan->is_enabled ? '' : 'text-[var(--muted)]' }}">
                         <td class="px-4 py-3 font-medium">
                             {{ $plan->name }}
                             @unless ($plan->is_enabled)
@@ -44,12 +44,12 @@
                         <td class="px-4 py-3">{{ $plan->monthly_price !== null ? number_format($plan->monthly_price).'円' : '-' }}</td>
                         <td class="px-4 py-3">{{ $plan->assignments_count }} 社</td>
                         <td class="px-4 py-3 text-right">
-                            <a href="{{ route('admin.posting-plans.edit', $plan) }}" class="text-gray-600 hover:underline">編集</a>
+                            <a href="{{ route('admin.posting-plans.edit', $plan) }}" class="text-[var(--ink-soft)] hover:underline">編集</a>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                        <td colspan="7" class="px-4 py-8 text-center text-[var(--muted)]">
                             掲載プランがまだ登録されていません。
                         </td>
                     </tr>

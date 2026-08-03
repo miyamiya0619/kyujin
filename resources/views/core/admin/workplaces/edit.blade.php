@@ -6,7 +6,7 @@
 @section('logout-url', route('admin.logout'))
 
 @section('content')
-    <a href="{{ route('admin.companies.workplaces.index', $company) }}" class="text-sm text-gray-600 hover:underline">
+    <a href="{{ route('admin.companies.workplaces.index', $company) }}" class="text-sm text-[var(--ink-soft)] hover:underline">
         &laquo; {{ $company->name }} の事業所一覧
     </a>
 
@@ -14,7 +14,7 @@
 
     <form method="POST" action="{{ route('admin.companies.workplaces.update', [$company, $workplace]) }}"
           enctype="multipart/form-data"
-          class="mt-6 max-w-2xl rounded border border-gray-200 bg-white p-6">
+          class="mt-6 max-w-2xl rounded border border-[var(--border)] bg-[var(--surface)] p-6">
         @csrf
         @method('PUT')
 
@@ -29,7 +29,7 @@
                     style="background-color: var(--theme-color)">
                 更新する
             </button>
-            <a href="{{ route('admin.companies.workplaces.index', $company) }}" class="text-sm text-gray-600 hover:underline">
+            <a href="{{ route('admin.companies.workplaces.index', $company) }}" class="text-sm text-[var(--ink-soft)] hover:underline">
                 キャンセル
             </a>
         </div>

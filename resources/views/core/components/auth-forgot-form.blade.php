@@ -4,15 +4,15 @@
 <form method="POST" action="{{ $action }}" class="space-y-4">
     @csrf
 
-    <p class="text-sm text-gray-600">
+    <p class="text-sm text-[var(--ink-soft)]">
         登録されているメールアドレスを入力してください。パスワード再設定用のリンクをお送りします。
     </p>
 
     <div>
-        <label for="email" class="block text-sm font-medium text-gray-700">メールアドレス</label>
+        <label for="email" class="block text-sm font-medium text-[var(--ink-soft)]">メールアドレス</label>
         <input id="email" name="email" type="email" value="{{ old('email') }}"
                required autofocus autocomplete="username"
-               class="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none">
+               class="mt-1 w-full rounded border border-[var(--border)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--theme-color,var(--theme-color-fallback))]">
     </div>
 
     <button type="submit"

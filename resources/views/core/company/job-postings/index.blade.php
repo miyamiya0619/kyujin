@@ -16,9 +16,9 @@
         </a>
     </div>
 
-    <div class="mt-6 overflow-x-auto rounded border border-gray-200 bg-white">
+    <div class="mt-6 overflow-x-auto rounded border border-[var(--border)] bg-[var(--surface)]">
         <table class="w-full text-sm">
-            <thead class="border-b border-gray-200 bg-gray-50 text-left text-xs text-gray-600">
+            <thead class="border-b border-[var(--border)] bg-[var(--bg)] text-left text-xs text-[var(--ink-soft)]">
                 <tr>
                     <th class="px-4 py-3">求人タイトル</th>
                     <th class="px-4 py-3">事業所</th>
@@ -26,7 +26,7 @@
                     <th class="px-4 py-3"></th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody class="divide-y divide-[var(--border)]">
                 @forelse ($jobPostings as $jobPosting)
                     <tr>
                         <td class="px-4 py-3 font-medium">
@@ -35,7 +35,7 @@
                                 <p class="mt-1 text-xs text-red-600">差戻し理由: {{ $jobPosting->reviews->first()->comment }}</p>
                             @endif
                         </td>
-                        <td class="px-4 py-3 text-gray-600">{{ $jobPosting->workplace->name }}</td>
+                        <td class="px-4 py-3 text-[var(--ink-soft)]">{{ $jobPosting->workplace->name }}</td>
                         <td class="px-4 py-3"><x-job-posting-status-badge :status="$jobPosting->status" /></td>
                         <td class="px-4 py-3 text-right">
                             <div class="flex justify-end gap-3">
@@ -48,10 +48,10 @@
                                     </form>
                                 @endif
                                 <a href="{{ route('company.job-postings.edit', $jobPosting) }}"
-                                   class="text-gray-600 hover:underline">編集</a>
+                                   class="text-[var(--ink-soft)] hover:underline">編集</a>
                                 <form method="POST" action="{{ route('company.job-postings.duplicate', $jobPosting) }}">
                                     @csrf
-                                    <button type="submit" class="text-gray-600 hover:underline">複製</button>
+                                    <button type="submit" class="text-[var(--ink-soft)] hover:underline">複製</button>
                                 </form>
                                 <form method="POST" action="{{ route('company.job-postings.destroy', $jobPosting) }}"
                                       onsubmit="return confirm('この求人を削除しますか?')">
@@ -64,7 +64,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-4 py-8 text-center text-gray-500">
+                        <td colspan="4" class="px-4 py-8 text-center text-[var(--muted)]">
                             求人がまだ登録されていません。
                         </td>
                     </tr>

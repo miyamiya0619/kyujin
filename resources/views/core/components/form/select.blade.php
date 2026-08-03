@@ -7,7 +7,7 @@
 <select
     id="{{ $name }}"
     name="{{ $name }}"
-    {{ $attributes->merge(['class' => 'mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm focus:border-gray-500 focus:outline-none']) }}>
+    {{ $attributes->merge(['class' => 'mt-1 w-full rounded border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--theme-color,var(--theme-color-fallback))]']) }}>
     <option value="">{{ $placeholder }}</option>
     @foreach ($options as $optionValue => $label)
         <option value="{{ $optionValue }}" @selected((string) old($name, $value) === (string) $optionValue)>{{ $label }}</option>

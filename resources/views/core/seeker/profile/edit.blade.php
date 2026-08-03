@@ -4,12 +4,12 @@
 
 @section('content')
     <section class="mx-auto max-w-2xl px-4 py-12">
-        <a href="{{ route('seeker.mypage') }}" class="text-sm text-gray-600 hover:underline">&laquo; マイページ</a>
+        <a href="{{ route('seeker.mypage') }}" class="text-sm text-[var(--ink-soft)] hover:underline">&laquo; マイページ</a>
 
         <h1 class="mt-1 text-xl font-bold">プロフィール編集</h1>
 
         <form method="POST" action="{{ route('seeker.profile.update') }}"
-              class="mt-6 rounded border border-gray-200 bg-white p-6">
+              class="mt-6 rounded border border-[var(--border)] bg-[var(--surface)] p-6">
             @csrf
             @method('PUT')
 
@@ -65,10 +65,10 @@
             </div>
         </form>
 
-        <div class="mt-8 rounded border border-gray-200 bg-white p-6">
-            <h2 class="text-sm font-semibold text-gray-700">職務経歴</h2>
+        <div class="mt-8 rounded border border-[var(--border)] bg-[var(--surface)] p-6">
+            <h2 class="text-sm font-semibold text-[var(--ink-soft)]">職務経歴</h2>
 
-            <p class="mt-1 text-xs text-gray-500">
+            <p class="mt-1 text-xs text-[var(--muted)]">
                 健康状態・病歴・障害など機微な情報は記入しないでください。
             </p>
 
@@ -83,7 +83,7 @@
 
             <x-experience-reorder-script />
 
-            <details class="mt-4 rounded border border-gray-200 p-4">
+            <details class="mt-4 rounded border border-[var(--border)] p-4">
                 <summary class="cursor-pointer text-sm font-medium">職務経歴を追加する</summary>
 
                 <form method="POST" action="{{ route('seeker.experiences.store') }}" class="mt-4 space-y-3">

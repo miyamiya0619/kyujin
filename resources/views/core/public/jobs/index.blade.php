@@ -17,13 +17,13 @@
                 :job-features="$jobFeatures" />
         </div>
 
-        <p class="mt-6 text-sm text-gray-600">{{ $jobPostings->total() }} 件の求人が見つかりました。</p>
+        <p class="mt-6 text-sm text-[var(--ink-soft)]">{{ $jobPostings->total() }} 件の求人が見つかりました。</p>
 
         <div class="mt-3 grid gap-3 sm:grid-cols-2">
             @forelse ($jobPostings as $jobPosting)
                 <x-job-posting-card :job-posting="$jobPosting" />
             @empty
-                <p class="col-span-2 rounded border border-gray-200 bg-white p-8 text-center text-gray-500">
+                <p class="col-span-2 rounded border border-[var(--border)] bg-[var(--surface)] p-8 text-center text-[var(--muted)]">
                     条件に合う求人が見つかりませんでした。条件を変えてお試しください。
                 </p>
             @endforelse

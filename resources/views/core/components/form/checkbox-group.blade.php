@@ -9,7 +9,7 @@
         <label class="flex items-center gap-1.5 text-sm">
             <input type="checkbox" name="{{ $name }}[]" value="{{ $id }}"
                    @checked(in_array($id, old($name, $selected)))
-                   class="rounded border-gray-300">
+                   class="rounded border-[var(--border)]">
             {{ $label }}
         </label>
     @endforeach
