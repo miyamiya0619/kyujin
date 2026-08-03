@@ -1,9 +1,9 @@
 {{--
     求人検索フォーム。トップページ(簡易版)と検索結果ページ(詳細版)で共通利用。
 
-    都道府県→市区町村の動的絞り込みは実装しない(T-06/T-07 と同じ割り切り)。
-    都道府県を選ぶとページが再読み込みされ、その都道府県の市区町村が
-    サーバ側で絞り込まれた状態で返ってくる(GET なので単純な画面遷移で済む)。
+    都道府県を変更すると Ajax で市区町村の選択肢を更新する
+    (`x-prefecture-city-select-script`)。フォーム自体の送信は
+    「この条件で探す」ボタンを押したときだけ行う。
 --}}
 @props(['prefectures', 'cities', 'facilityTypes' => null, 'jobCategories' => null, 'employmentTypes' => null, 'jobFeatures' => null, 'compact' => false])
 
@@ -11,7 +11,7 @@
     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div>
             <label for="prefecture_id" class="block text-xs text-[var(--muted)]">都道府県</label>
-            <select id="prefecture_id" name="prefecture_id" onchange="this.form.submit()"
+            <select id="prefecture_id" name="prefecture_id" data-prefecture-select
                     class="mt-1 w-full rounded border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm">
                 <option value="">指定なし</option>
                 @foreach ($prefectures as $prefecture)
@@ -34,6 +34,8 @@
                 @endforeach
             </select>
         </div>
+
+        <x-prefecture-city-select-script />
 
         @if ($jobCategories)
             <div>
