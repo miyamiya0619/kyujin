@@ -1,12 +1,8 @@
 {{--
-    都道府県セレクトの補助 JS。企業情報・事業所情報の両フォームで使う。
+    都道府県セレクトの補助 JS。企業情報・事業所情報・求職者プロフィールの各フォームで使う。
 
-    **市区町村の動的読み込みは今回のスコープ外。**
-    都道府県を変更すると本来は Ajax で該当の市区町村を取得すべきだが、
-    そのためだけに API エンドポイントを増やすのは T-06 の範囲を超える。
-    ここでは都道府県を変更したときに市区町村の選択肢を一旦リセットし、
-    保存後の再読み込みで正しい候補に更新される、という割り切りにしている。
-    体験を改善する場合は Phase 2 で軽量な API を足す形で対応する。
+    都道府県を変更した瞬間に、対応する市区町村の一覧を Ajax で取得して
+    選択肢を差し替える(`Public\CityController::byPrefecture`)。
 --}}
 @once
     <script>
@@ -15,16 +11,46 @@
             const citySelect = document.getElementById('city_id');
             if (!prefectureSelect || !citySelect) return;
 
-            // 初期表示時点の市区町村選択肢を都道府県 ID ごとに記憶しておく。
-            // サーバ側で既に「選ばれた都道府県の市区町村」だけを渡しているため、
-            // ここでは「都道府県を変更したら選択肢をリセットする」だけを行う。
-            const initialPrefectureId = prefectureSelect.value;
+            function setCityOptions(cities) {
+                citySelect.innerHTML = '';
 
-            prefectureSelect.addEventListener('change', () => {
-                if (prefectureSelect.value !== initialPrefectureId) {
-                    citySelect.innerHTML = '<option value="">都道府県を選び直すと候補が更新されます(保存後に反映)</option>';
-                    citySelect.disabled = true;
-                } else {
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = '指定なし';
+                citySelect.appendChild(placeholder);
+
+                cities.forEach(({ id, name }) => {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = name;
+                    citySelect.appendChild(option);
+                });
+            }
+
+            prefectureSelect.addEventListener('change', async () => {
+                if (!prefectureSelect.value) {
+                    setCityOptions([]);
+                    return;
+                }
+
+                const previousOptions = citySelect.innerHTML;
+                citySelect.disabled = true;
+                citySelect.innerHTML = '<option value="">読み込み中&hellip;</option>';
+
+                try {
+                    const response = await fetch(`/cities/by-prefecture/${prefectureSelect.value}`, {
+                        headers: { Accept: 'application/json' },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('市区町村の取得に失敗しました');
+                    }
+
+                    setCityOptions(await response.json());
+                } catch (error) {
+                    // 取得に失敗しても入力を止めないよう、元の選択肢に戻す。
+                    citySelect.innerHTML = previousOptions;
+                } finally {
                     citySelect.disabled = false;
                 }
             });

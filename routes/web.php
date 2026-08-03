@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Feed\FeedController;
 use App\Http\Controllers\Public\ApplicationController;
+use App\Http\Controllers\Public\CityController;
 use App\Http\Controllers\Public\CompanyController;
 use App\Http\Controllers\Public\JobPostingController;
 use App\Http\Controllers\Public\SitemapController;
@@ -35,6 +36,11 @@ Route::name('public.')->group(function () {
     Route::get('companies/{company}', [CompanyController::class, 'show'])->name('companies.show');
     Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 });
+
+// 都道府県セレクトの補助 API(x-prefecture-city-select-script から fetch する)。
+// 認証不要。個人情報を含まない配布マスタの参照のみ。
+Route::get('cities/by-prefecture/{prefecture}', [CityController::class, 'byPrefecture'])
+    ->name('cities.by-prefecture');
 
 // アグリゲーション媒体向け XML フィード(SPEC.md 10.1)。
 Route::get('feed/indeed.xml', [FeedController::class, 'indeed'])->name('feed.indeed');
