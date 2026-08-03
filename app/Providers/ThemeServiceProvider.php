@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Application;
+use App\Models\JobPosting;
 use App\Models\SiteSetting;
 use App\Support\Theme\ThemeManager;
 use Illuminate\Support\Facades\View;
@@ -22,6 +24,7 @@ class ThemeServiceProvider extends ServiceProvider
         $this->app->make(ThemeManager::class)->applyViewPaths();
 
         $this->shareSiteSettings();
+        $this->shareManageNavCounts();
     }
 
     /**
@@ -40,6 +43,31 @@ class ThemeServiceProvider extends ServiceProvider
                 // マイグレーション前など、設定を読めない状況でも
                 // ビューの描画自体は失敗させない
                 $view->with('site', new SiteSetting);
+            }
+        });
+    }
+
+    /**
+     * 管理画面の左サイドナビに出す件数バッジ。
+     *
+     * `layouts.manage` はダッシュボード以外の全ページ(一覧・編集フォーム等)からも
+     * 使われるため、個々のコントローラに件数取得を書かせず、ここで一元的に用意する
+     * ($site と同じ考え方)。
+     */
+    private function shareManageNavCounts(): void
+    {
+        View::composer('layouts.manage', function ($view) {
+            try {
+                if (auth('admin')->check()) {
+                    $view->with('pendingReviewCount', JobPosting::where('status', JobPosting::STATUS_PENDING)->count());
+                } elseif (auth('company')->check()) {
+                    $company = auth('company')->user()->company;
+                    $view->with('unhandledApplicationCount', Application::where('company_id', $company->id)
+                        ->where('status', Application::STATUS_NEW)
+                        ->count());
+                }
+            } catch (Throwable) {
+                // マイグレーション前などでテーブルが無くても管理画面の描画は失敗させない
             }
         });
     }

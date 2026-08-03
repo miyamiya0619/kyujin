@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
  */
 class FeedController extends Controller
 {
-    private const MEDIA_NAMES = [
+    public const MEDIA_NAMES = [
         'direct' => '自社サイト',
         'indeed' => 'Indeed',
         'kyujinbox' => '求人ボックス',

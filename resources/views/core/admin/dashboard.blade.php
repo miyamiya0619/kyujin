@@ -8,65 +8,59 @@
 @section('content')
     <h1 class="text-xl font-bold">ダッシュボード</h1>
 
-    <div class="mt-6 grid gap-4 sm:grid-cols-3">
-        <a href="{{ route('admin.reviews.index') }}"
-           class="rounded border border-[var(--border)] bg-[var(--surface)] p-5 hover:border-[var(--muted)]">
-            <p class="font-semibold">審査待ち</p>
-            <p class="mt-1 text-2xl font-bold" style="color: var(--theme-color)">{{ $pendingCount }} 件</p>
+    <div class="kpi-row mt-6">
+        <a href="{{ route('admin.reviews.index') }}" class="kpi @if ($pendingCount > 0) is-alert @endif">
+            <p class="kpi-label">審査待ち</p>
+            <p class="kpi-num">{{ $pendingCount }} 件</p>
         </a>
-
-        <div class="rounded border border-[var(--border)] bg-[var(--surface)] p-5">
-            <p class="font-semibold">掲載中求人数</p>
-            <p class="mt-1 text-2xl font-bold" style="color: var(--theme-color)">{{ $publishedCount }} 件</p>
+        <div class="kpi">
+            <p class="kpi-label">掲載中求人数</p>
+            <p class="kpi-num">{{ $publishedCount }} 件</p>
         </div>
-
-        <div class="rounded border border-[var(--border)] bg-[var(--surface)] p-5">
-            <p class="font-semibold">今月の応募数</p>
-            <p class="mt-1 text-2xl font-bold" style="color: var(--theme-color)">{{ $monthlyApplicationsCount }} 件</p>
+        <div class="kpi">
+            <p class="kpi-label">今月の応募数</p>
+            <p class="kpi-num">{{ $monthlyApplicationsCount }} 件</p>
         </div>
     </div>
 
-    <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <a href="{{ route('admin.companies.index') }}"
-           class="rounded border border-[var(--border)] bg-[var(--surface)] p-5 hover:border-[var(--muted)]">
-            <p class="font-semibold">掲載企業</p>
-            <p class="mt-1 text-sm text-[var(--ink-soft)]">企業の登録と担当者アカウントの発行</p>
-        </a>
+    <div class="grid gap-5 lg:grid-cols-3">
+        <div class="lg:col-span-2">
+            <div class="panel">
+                <div class="panel-head">
+                    <h2>審査待ち一覧</h2>
+                    <a href="{{ route('admin.reviews.index') }}" class="text-xs hover:underline" style="color: var(--theme-color)">すべて見る &rarr;</a>
+                </div>
 
-        <a href="{{ route('admin.posting-plans.index') }}"
-           class="rounded border border-[var(--border)] bg-[var(--surface)] p-5 hover:border-[var(--muted)]">
-            <p class="font-semibold">掲載プラン</p>
-            <p class="mt-1 text-sm text-[var(--ink-soft)]">プランの定義と掲載企業への割当</p>
-        </a>
+                @forelse ($pendingReviews as $jobPosting)
+                    <div class="p-4" style="border-bottom: 1px solid var(--border)">
+                        <p class="text-xs" style="color: var(--muted)">{{ $jobPosting->company->name }} / {{ $jobPosting->workplace->name }}</p>
+                        <p class="mt-1 font-semibold">{{ $jobPosting->title }}</p>
+                        <div class="mt-3 flex gap-2">
+                            <form method="POST" action="{{ route('admin.job-postings.approve', $jobPosting) }}">
+                                @csrf
+                                <button type="submit" class="rounded px-3 py-1.5 text-xs font-semibold text-white" style="background-color: var(--success)">承認して公開する</button>
+                            </form>
+                            <a href="{{ route('admin.companies.job-postings.edit', [$jobPosting->company, $jobPosting]) }}" class="btn-ghost" style="padding: 0.35rem 0.9rem; font-size: 12.5px;">内容を確認</a>
+                        </div>
+                    </div>
+                @empty
+                    <p class="p-6 text-center text-sm" style="color: var(--muted)">審査待ちの求人はありません。</p>
+                @endforelse
+            </div>
+        </div>
 
-        <a href="{{ route('admin.applications.index') }}"
-           class="rounded border border-[var(--border)] bg-[var(--surface)] p-5 hover:border-[var(--muted)]">
-            <p class="font-semibold">応募の横断確認</p>
-            <p class="mt-1 text-sm text-[var(--ink-soft)]">全掲載企業の応募状況を確認</p>
-        </a>
-
-        <a href="{{ route('admin.feeds.index') }}"
-           class="rounded border border-[var(--border)] bg-[var(--surface)] p-5 hover:border-[var(--muted)]">
-            <p class="font-semibold">媒体別の効果</p>
-            <p class="mt-1 text-sm text-[var(--ink-soft)]">Indeed・求人ボックス等の配信状況と応募数</p>
-        </a>
-
-        <a href="{{ route('admin.site-settings.edit') }}"
-           class="rounded border border-[var(--border)] bg-[var(--surface)] p-5 hover:border-[var(--muted)]">
-            <p class="font-semibold">サイト設定</p>
-            <p class="mt-1 text-sm text-[var(--ink-soft)]">メディア名・ロゴ・テーマ・機能のオンオフ</p>
-        </a>
-
-        <a href="{{ route('admin.masters.home') }}"
-           class="rounded border border-[var(--border)] bg-[var(--surface)] p-5 hover:border-[var(--muted)]">
-            <p class="font-semibold">マスタ管理</p>
-            <p class="mt-1 text-sm text-[var(--ink-soft)]">資格・施設形態・職種などの有効/無効と並び順</p>
-        </a>
-
-        <a href="{{ route('admin.audit-logs.index') }}"
-           class="rounded border border-[var(--border)] bg-[var(--surface)] p-5 hover:border-[var(--muted)]">
-            <p class="font-semibold">監査ログ</p>
-            <p class="mt-1 text-sm text-[var(--ink-soft)]">操作者・期間・対象で絞り込んで確認</p>
-        </a>
+        <div class="panel">
+            <div class="panel-head"><h2>媒体別の応募割合</h2></div>
+            <div class="p-4">
+                @foreach ($mediaNames as $source => $label)
+                    @php($count = $applicationCounts[$source] ?? 0)
+                    <div class="mini-bar-row">
+                        <span class="mini-bar-name">{{ $label }}</span>
+                        <div class="mini-bar-track"><div class="mini-bar-fill" style="width: {{ (int) ($count / $maxApplicationCount * 100) }}%"></div></div>
+                        <span class="mini-bar-val">{{ $count }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
     </div>
 @endsection

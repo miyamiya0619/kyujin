@@ -100,3 +100,170 @@ a {
     color: var(--theme-color, var(--theme-color-fallback));
     font-weight: 500;
 }
+
+/* ---- 管理画面(運営者・掲載企業)のシェル ---- */
+
+.admin-shell {
+    display: grid;
+    grid-template-columns: 232px 1fr;
+    align-items: start;
+}
+
+.admin-side {
+    background-color: var(--theme-color, var(--theme-color-fallback));
+    color: #EAF3EE;
+    padding: 20px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: calc(100vh - 57px);
+}
+
+.admin-side .brand {
+    font-family: var(--font-display, serif);
+    font-size: 15px;
+    font-weight: 700;
+    padding: 4px 10px 18px;
+    line-height: 1.5;
+    opacity: 0.95;
+}
+
+.admin-side a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: #CFE3D8;
+    text-decoration: none;
+}
+
+.admin-side a:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.admin-side a.is-current {
+    background-color: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    font-weight: 600;
+}
+
+.admin-side .badge {
+    margin-left: auto;
+    background-color: var(--warning);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 999px;
+}
+
+.admin-main {
+    padding: 28px 32px 60px;
+}
+
+@media (max-width: 860px) {
+    .admin-shell {
+        grid-template-columns: 1fr;
+    }
+    .admin-side {
+        display: none;
+    }
+}
+
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.kpi {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+}
+
+.kpi .kpi-label {
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.kpi .kpi-num {
+    font-size: 28px;
+    font-weight: 700;
+    margin-top: 6px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+}
+
+.kpi .kpi-num small {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-left: 3px;
+}
+
+.kpi.is-alert {
+    border-color: var(--warning);
+}
+.kpi.is-alert .kpi-num {
+    color: var(--warning);
+}
+
+.panel {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 22px;
+}
+
+.panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.panel-head h2 {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.mini-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 13px;
+}
+.mini-bar-row .mini-bar-name {
+    width: 96px;
+    flex-shrink: 0;
+    color: var(--ink-soft);
+}
+.mini-bar-track {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    background-color: var(--bg);
+    overflow: hidden;
+}
+.mini-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background-color: var(--theme-color, var(--theme-color-fallback));
+}
+.mini-bar-row .mini-bar-val {
+    width: 34px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+}

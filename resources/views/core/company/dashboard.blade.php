@@ -8,58 +8,54 @@
 @section('content')
     <h1 class="text-xl font-bold">ダッシュボード</h1>
 
-    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <a href="{{ route('company.profile.edit') }}"
-           class="rounded border border-[var(--border)] bg-[var(--surface)] p-5 hover:border-[var(--muted)]">
-            <p class="font-semibold">企業情報</p>
-            <p class="mt-1 text-sm text-[var(--ink-soft)]">求人ページに表示される自社の紹介</p>
+    <div class="kpi-row mt-6">
+        <div class="kpi">
+            <p class="kpi-label">掲載中の求人</p>
+            <p class="kpi-num">{{ $publishedJobPostingCount }} 件</p>
+        </div>
+        <a href="{{ route('company.applications.index') }}" class="kpi @if ($newApplicationsCount > 0) is-alert @endif">
+            <p class="kpi-label">未対応の応募</p>
+            <p class="kpi-num">{{ $newApplicationsCount }} 件</p>
         </a>
-
-        <a href="{{ route('company.workplaces.index') }}"
-           class="rounded border border-[var(--border)] bg-[var(--surface)] p-5 hover:border-[var(--muted)]">
-            <p class="font-semibold">事業所</p>
-            <p class="mt-1 text-sm text-[var(--ink-soft)]">特養・デイサービスなどの拠点情報</p>
-        </a>
-
-        <a href="{{ route('company.job-postings.index') }}"
-           class="rounded border border-[var(--border)] bg-[var(--surface)] p-5 hover:border-[var(--muted)]">
-            <p class="font-semibold">求人</p>
-            <p class="mt-1 text-sm text-[var(--ink-soft)]">求人の登録・編集・複製</p>
-        </a>
-
-        <a href="{{ route('company.applications.index') }}"
-           class="rounded border border-[var(--border)] bg-[var(--surface)] p-5 hover:border-[var(--muted)]">
-            <p class="flex items-center gap-2 font-semibold">
-                応募者
-                @if ($newApplicationsCount > 0)
-                    <span class="rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white">
-                        未対応 {{ $newApplicationsCount }}
-                    </span>
-                @endif
-            </p>
-            <p class="mt-1 text-sm text-[var(--ink-soft)]">応募者一覧・選考ステータス</p>
-        </a>
+        <div class="kpi">
+            <p class="kpi-label">求人の残枠</p>
+            <p class="kpi-num">{{ $remainingJobPostingSlots === null ? '無制限' : "{$remainingJobPostingSlots} 件" }}</p>
+        </div>
+        <div class="kpi">
+            <p class="kpi-label">事業所の残枠</p>
+            <p class="kpi-num">{{ $remainingWorkplaceSlots === null ? '無制限' : "{$remainingWorkplaceSlots} 件" }}</p>
+        </div>
     </div>
 
-    <div class="mt-6 rounded border border-[var(--border)] bg-[var(--surface)] p-5">
-        <h2 class="text-sm font-semibold text-[var(--ink-soft)]">掲載プラン</h2>
+    <div class="panel">
+        <div class="panel-head">
+            <h2>新着応募者</h2>
+            <a href="{{ route('company.applications.index') }}" class="text-xs hover:underline" style="color: var(--theme-color)">すべて見る &rarr;</a>
+        </div>
 
-        @if ($currentPlan)
-            <p class="mt-2 text-sm">現在のプラン: <span class="font-medium">{{ $currentPlan->name }}</span></p>
-            <dl class="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
+        @forelse ($recentApplications as $application)
+            <a href="{{ route('company.applications.show', $application) }}" class="flex items-center justify-between gap-3 p-4" style="border-bottom: 1px solid var(--border)">
                 <div>
-                    <dt class="text-xs text-[var(--muted)]">求人の残枠</dt>
-                    <dd class="font-medium">{{ $remainingJobPostingSlots === null ? '無制限' : "{$remainingJobPostingSlots} 件" }}</dd>
+                    <p class="font-medium">{{ $application->jobPosting->title }}</p>
+                    <p class="mt-1 text-xs" style="color: var(--muted)">応募日: {{ $application->applied_at->format('Y/m/d') }} ・ 流入元: {{ $application->referrer_source }}</p>
                 </div>
-                <div>
-                    <dt class="text-xs text-[var(--muted)]">事業所の残枠</dt>
-                    <dd class="font-medium">{{ $remainingWorkplaceSlots === null ? '無制限' : "{$remainingWorkplaceSlots} 件" }}</dd>
-                </div>
-            </dl>
-        @else
-            <p class="mt-2 text-sm text-[var(--ink-soft)]">
-                掲載プランが割り当てられていません(制限なくご利用いただけます)。
-            </p>
-        @endif
+                <x-application-status-badge :status="$application->status" />
+            </a>
+        @empty
+            <p class="p-6 text-center text-sm" style="color: var(--muted)">まだ応募はありません。</p>
+        @endforelse
+    </div>
+
+    <div class="panel">
+        <div class="panel-head"><h2>掲載プラン</h2></div>
+        <div class="p-4">
+            @if ($currentPlan)
+                <p class="text-sm">現在のプラン: <span class="font-medium">{{ $currentPlan->name }}</span></p>
+            @else
+                <p class="text-sm" style="color: var(--ink-soft)">
+                    掲載プランが割り当てられていません(制限なくご利用いただけます)。
+                </p>
+            @endif
+        </div>
     </div>
 @endsection
