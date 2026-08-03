@@ -44,8 +44,20 @@ body {
     color: var(--ink);
 }
 
-a {
-    color: var(--theme-color, var(--theme-color-fallback));
+/*
+ * Tailwind のユーティリティは @layer utilities の中で定義される。
+ * CSS のレイヤーはレイヤー無し(このファイルのようなプレーンな CSS)が
+ * 常にレイヤー付きのルールに優先するため、レイヤーを指定せずに
+ * `a { color }` を書くと、詳細度に関係なく Tailwind の `text-white` 等の
+ * ユーティリティを上書きしてしまう(実際に起きた: ボタン化した <a> の
+ * 文字が背景色と同化して見えなくなるバグ)。
+ * 同じ `base` レイヤーに参加させることで、詳細度どおりに
+ * ユーティリティ側が勝つようにする。
+ */
+@layer base {
+    a {
+        color: var(--theme-color, var(--theme-color-fallback));
+    }
 }
 
 /* ---- 共通コンポーネント ---- */
@@ -106,7 +118,7 @@ a {
 .admin-shell {
     display: grid;
     grid-template-columns: 232px 1fr;
-    align-items: start;
+    align-items: stretch;
 }
 
 .admin-side {
@@ -116,6 +128,9 @@ a {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    /* align-items: stretch(既定)により、実際には .admin-main と同じ高さまで
+       伸びる。100vh はコンテンツが短いページでも最低限ビューポート一杯まで
+       色が付くようにするための下限値。 */
     min-height: calc(100vh - 57px);
 }
 
@@ -266,4 +281,21 @@ a {
     text-align: right;
     font-variant-numeric: tabular-nums;
     color: var(--ink-soft);
+}
+
+/* ファイル選択ボタン(ロゴ・写真アップロード等)。ブラウザ既定のネイティブボタンだと
+   周囲の文字色を巻き込んで視認性が落ちることがあるため、明示的に配色する。 */
+input[type="file"]::file-selector-button {
+    margin-right: 0.75rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background-color: var(--surface);
+    color: var(--ink);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+input[type="file"]::file-selector-button:hover {
+    background-color: var(--bg);
 }
