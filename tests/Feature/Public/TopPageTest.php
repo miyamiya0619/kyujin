@@ -3,6 +3,7 @@
 namespace Tests\Feature\Public;
 
 use App\Models\JobPosting;
+use App\Models\JobSeeker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,6 +14,23 @@ class TopPageTest extends TestCase
     public function test_トップページが表示される(): void
     {
         $this->get(route('public.top'))->assertOk();
+    }
+
+    public function test_未ログインではヘッダーにログインリンクが出る(): void
+    {
+        $this->get(route('public.top'))
+            ->assertSee('ログイン')
+            ->assertDontSee('こんにちは');
+    }
+
+    public function test_ログイン中はヘッダーに名前とログアウトが出る(): void
+    {
+        $jobSeeker = JobSeeker::factory()->create(['name' => '山田太郎']);
+
+        $this->actingAs($jobSeeker, 'seeker')
+            ->get(route('public.top'))
+            ->assertSee('こんにちは、山田太郎 さん')
+            ->assertSee('ログアウト');
     }
 
     public function test_上位表示の求人がおすすめ求人として表示される(): void

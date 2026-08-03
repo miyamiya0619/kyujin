@@ -11,9 +11,19 @@
 
         <nav class="flex items-center gap-6 text-sm" style="color: var(--ink-soft)">
             <a href="{{ url('/') }}" class="hover:underline">求人を探す</a>
-            @if ($site->enables_member)
-                <a href="{{ url('/login') }}" class="hover:underline">ログイン</a>
-            @endif
+            @auth('seeker')
+                <a href="{{ route('seeker.mypage') }}" class="hover:underline">
+                    こんにちは、{{ auth('seeker')->user()->name }} さん
+                </a>
+                <form method="POST" action="{{ route('seeker.logout') }}">
+                    @csrf
+                    <button type="submit" class="hover:underline">ログアウト</button>
+                </form>
+            @else
+                @if ($site->enables_member)
+                    <a href="{{ url('/login') }}" class="hover:underline">ログイン</a>
+                @endif
+            @endauth
         </nav>
     </div>
 </header>
