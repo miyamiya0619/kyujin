@@ -6,22 +6,22 @@
 @props(['jobPosting'])
 
 <a href="{{ route('public.jobs.show', $jobPosting) }}"
-   class="block rounded border border-gray-200 bg-white p-4 hover:border-gray-400 hover:shadow-sm">
+   class="card block p-4 transition-shadow hover:shadow-md">
     <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
             @if ($jobPosting->is_featured)
-                <span class="inline-block rounded bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
+                <span class="tag" style="background-color: var(--warning-bg); color: var(--warning)">
                     おすすめ
                 </span>
             @endif
 
             <h3 class="mt-1 truncate font-semibold">{{ $jobPosting->title }}</h3>
 
-            <p class="mt-1 text-sm text-gray-600">
+            <p class="mt-1 text-sm" style="color: var(--ink-soft)">
                 {{ $jobPosting->company->name }} / {{ $jobPosting->workplace->name }}
             </p>
 
-            <p class="mt-1 text-xs text-gray-500">
+            <p class="mt-1 text-xs" style="color: var(--muted)">
                 {{ $jobPosting->workplace->locationLabel() }}
                 @if ($jobPosting->jobCategory) ・ {{ $jobPosting->jobCategory->name }} @endif
                 @if ($jobPosting->employmentType) ・ {{ $jobPosting->employmentType->name }} @endif
@@ -30,7 +30,7 @@
 
         @if ($jobPosting->salary_min || $jobPosting->salary_max)
             <div class="shrink-0 text-right">
-                <p class="text-xs text-gray-500">
+                <p class="text-xs" style="color: var(--muted)">
                     @if ($jobPosting->salary_type === 'monthly') 月給
                     @elseif ($jobPosting->salary_type === 'hourly') 時給
                     @elseif ($jobPosting->salary_type === 'daily') 日給
@@ -45,6 +45,6 @@
     </div>
 
     @if ($jobPosting->has_night_shift)
-        <span class="mt-2 inline-block rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">夜勤あり</span>
+        <span class="tag mt-2" style="background-color: var(--bg); color: var(--ink-soft)">夜勤あり</span>
     @endif
 </a>

@@ -45,7 +45,7 @@
 
     @stack('head')
 </head>
-<body class="min-h-screen flex flex-col bg-white text-gray-900">
+<body class="min-h-screen flex flex-col">
     @include('layouts.header')
 
     <main class="flex-1">

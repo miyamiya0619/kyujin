@@ -6,12 +6,97 @@
  *
  * 顧客ごとにデザインを個別制作する場合は
  * public/themes/{テーマ名}/css/theme.css を用意する。
+ *
+ * --theme-color だけは運営者がサイト設定から変更できる(SiteSetting::theme_color)。
+ * それ以外のトークン(下記)は標準テーマ固有の固定値で、顧客ごとに変わらない。
  */
 
 :root {
-    --theme-color-fallback: #2563eb;
+    --theme-color-fallback: #2F5D50;
+
+    /* 中立色。緑がかった標準テーマの基調に合わせて選んでいる(単純なグレーにしない)。 */
+    --ink: #1E2A24;
+    --ink-soft: #47534C;
+    --muted: #7E8D86;
+    --bg: #F5F7F2;
+    --surface: #FFFFFF;
+    --border: #DEE3D7;
+
+    /* --theme-color の淡色版。タグ・強調背景に使う。 */
+    --brand-tint: #E7EFE9;
+
+    --success: #3F7F55;
+    --success-bg: #E3F0E5;
+    --warning: #C6633C;
+    --warning-bg: #FBEAE1;
+    --danger: #B3432B;
+    --danger-bg: #FBE7E1;
+    --info: #3B6E8F;
+    --info-bg: #E4EEF3;
+}
+
+html {
+    background-color: var(--bg);
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--ink);
 }
 
 a {
     color: var(--theme-color, var(--theme-color-fallback));
+}
+
+/* ---- 共通コンポーネント ---- */
+
+.btn-primary,
+.btn-brand,
+.btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border-radius: 8px;
+    padding: 0.65rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    border: 1px solid transparent;
+    transition: filter 0.15s, background-color 0.15s, border-color 0.15s;
+}
+
+.btn-primary {
+    background-color: var(--theme-color, var(--theme-color-fallback));
+    color: #fff;
+}
+.btn-primary:hover {
+    filter: brightness(0.92);
+}
+
+.btn-ghost {
+    background-color: transparent;
+    border-color: var(--border);
+    color: var(--ink-soft);
+}
+.btn-ghost:hover {
+    border-color: var(--muted);
+    color: var(--ink);
+}
+
+.card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    background-color: var(--brand-tint);
+    color: var(--theme-color, var(--theme-color-fallback));
+    font-weight: 500;
 }

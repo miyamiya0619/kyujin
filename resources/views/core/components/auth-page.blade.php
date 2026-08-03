@@ -18,21 +18,23 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ theme_asset('css/theme.css') }}">
 </head>
-<body class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+<body class="flex min-h-screen items-center justify-center px-4 py-12" style="background-color: var(--bg); color: var(--ink)">
     <div class="w-full max-w-sm">
         <div class="mb-6 text-center">
-            <p class="text-lg font-bold" style="color: var(--theme-color)">{{ $site->site_name }}</p>
-            <h1 class="mt-1 text-sm text-gray-600">{{ $title }}</h1>
+            <p class="font-display text-lg font-bold" style="color: var(--theme-color)">{{ $site->site_name }}</p>
+            <h1 class="mt-1 text-sm" style="color: var(--ink-soft)">{{ $title }}</h1>
         </div>
 
         @if (session('status'))
-            <div class="mb-4 rounded border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-800">
+            <div class="mb-4 rounded border px-4 py-3 text-sm"
+                 style="border-color: var(--success); background-color: var(--success-bg); color: var(--success)">
                 {{ session('status') }}
             </div>
         @endif
 
         @if ($errors->any())
-            <div class="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
+            <div class="mb-4 rounded border px-4 py-3 text-sm"
+                 style="border-color: var(--danger); background-color: var(--danger-bg); color: var(--danger)">
                 <ul class="list-inside list-disc space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -41,13 +43,13 @@
             </div>
         @endif
 
-        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <div class="card p-6" style="box-shadow: 0 1px 2px rgba(30,42,36,.06), 0 8px 24px -12px rgba(30,42,36,.18)">
             {{ $slot }}
         </div>
 
         @if ($backUrl)
             <p class="mt-4 text-center text-sm">
-                <a href="{{ $backUrl }}" class="text-gray-600 hover:underline">{{ $backLabel }}</a>
+                <a href="{{ $backUrl }}" class="hover:underline" style="color: var(--ink-soft)">{{ $backLabel }}</a>
             </p>
         @endif
     </div>

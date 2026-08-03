@@ -1,15 +1,15 @@
 {{-- コアの共通ヘッダー。テーマで差し替え可能。 --}}
-<header class="border-b border-gray-200">
+<header class="border-b" style="border-color: var(--border); background-color: var(--surface)">
     <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
         <a href="{{ url('/') }}" class="flex items-center gap-2">
             @if ($site->logo_path)
-                <img src="{{ asset('storage/'.$site->logo_path) }}" alt="{{ $site->site_name }}" class="h-8">
+                <img src="{{ \App\Services\ImageUploadService::url($site->logo_path) }}" alt="{{ $site->site_name }}" class="h-8">
             @else
-                <span class="text-lg font-bold" style="color: var(--theme-color)">{{ $site->site_name }}</span>
+                <span class="font-display text-lg font-bold" style="color: var(--theme-color)">{{ $site->site_name }}</span>
             @endif
         </a>
 
-        <nav class="flex items-center gap-4 text-sm">
+        <nav class="flex items-center gap-6 text-sm" style="color: var(--ink-soft)">
             <a href="{{ url('/') }}" class="hover:underline">求人を探す</a>
             @if ($site->enables_member)
                 <a href="{{ url('/login') }}" class="hover:underline">ログイン</a>

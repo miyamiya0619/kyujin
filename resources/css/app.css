@@ -4,6 +4,11 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* 本文・UI 全般。日本語が主体のため OS 標準の日本語ゴシックを優先する
+       (Web フォントは配布しない。本番にビルド環境が無いため。CLAUDE.md 4章)。 */
+    --font-sans: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Noto Sans JP', 'Meiryo',
+        ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+    /* 公開サイトの見出しにだけ使う明朝体。介護・福祉らしい温かみを出す。 */
+    --font-display: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', 'Hiragino Sans', serif;
 }
