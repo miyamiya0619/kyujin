@@ -672,7 +672,21 @@ xlsx は Excel を追加ライブラリなしで読む(ZIP 内の XML を直接�
 | **PHP の実行時間・メモリ上限** | フィード生成・一括処理は必ずチャンク処理にする |
 | **Web サーバ設定を変更できない** | リダイレクト等はアプリ側か `.htaccess` で行う |
 
-**要確認事項**(T-01 で実機確認して本節を更新する): git の利用可否 / cron の最小間隔 / `symlink()` の可否 / GD・Imagick の有無 / `memory_limit` と `max_execution_time` の実効値
+**実機確認済み**(2026-08-05、`sv16436.xserver.jp` / アカウント `xs413120` で確認)
+
+| 項目 | 実測値 |
+|---|---|
+| git | 利用可(`/usr/bin/git`、SSH 経由で `git clone` / `git pull` 可) |
+| cron の最小間隔 | **毎分(`* * * * *`)まで指定可能** |
+| `symlink()` | 利用可。`docs/新規環境の構築手順.md` 1.1 節の代替手順は不要だった |
+| GD / Imagick | 両方あり。WebP 変換(`imagewebp`)も利用可能 |
+| `memory_limit` | `1G`(`.user.ini`) |
+| `max_execution_time` | `180`秒(`.user.ini`) |
+| SSH の `php` / `composer` | **ドメインの「PHP Ver.切替」は Web 実行にしか反映されない。** SSH の `php` はシステム既定の別バージョン(このサーバーでは 8.0)を指すため、`php8.4` を明示するか `deploy.sh` の `PHP_BIN` で上書きする必要がある(→ [デプロイ手順.md](docs/デプロイ手順.md)) |
+| SSH 接続情報 | ユーザー名はメールアドレスではなく **サーバーID**、ポート `10022`、パスワード認証不可(公開鍵登録が必須) |
+| MySQL 接続ホスト | `localhost` で到達可能 |
+
+詳細は [環境台帳.md](docs/環境台帳.md) の「デモメディア(JobCone)」個別メモを参照。
 
 ### 13.2 環境構成
 

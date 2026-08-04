@@ -10,35 +10,44 @@
 #
 # 使い方:
 #   ./deploy.sh
+#
+# 共有レンタルサーバーでは SSH の `php` / `composer` コマンドが本番の対象
+# バージョンと異なることがある(Xserver は `php` が既定で古いバージョンを
+# 指し、ドメインの PHP バージョン切替は Web 実行にしか反映されない)。
+# その場合は環境変数で明示的に指定する:
+#   PHP_BIN=php8.4 ./deploy.sh
 set -euo pipefail
 
 cd "$(dirname "$0")"
 
+PHP_BIN="${PHP_BIN:-php}"
+COMPOSER_BIN="${COMPOSER_BIN:-composer}"
+
 echo "==> メンテナンスモードへ切り替え"
-php artisan down --render="errors::503" --retry=15 || true
+"$PHP_BIN" artisan down --render="errors::503" --retry=15 || true
 
 # 何が起きてもメンテナンスモードを解除してから終了する。
 cleanup() {
   echo "==> メンテナンスモードを解除"
-  php artisan up
+  "$PHP_BIN" artisan up
 }
 trap cleanup EXIT
 
 echo "==> git pull"
-git pull origin main
+git pull origin master
 
 echo "==> composer install(本番用)"
-composer install --no-dev --optimize-autoloader
+"$PHP_BIN" "$COMPOSER_BIN" install --no-dev --optimize-autoloader
 
 echo "==> マイグレーション"
-php artisan migrate --force
+"$PHP_BIN" artisan migrate --force
 
 echo "==> キャッシュの再構築"
-php artisan config:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan event:cache
+"$PHP_BIN" artisan config:clear
+"$PHP_BIN" artisan config:cache
+"$PHP_BIN" artisan route:cache
+"$PHP_BIN" artisan view:cache
+"$PHP_BIN" artisan event:cache
 
 # キューは cron から毎分 `queue:work --stop-when-empty` を実行する運用で、
 # 常駐ワーカーが存在しない(TASKS.md T-15)。次の cron 実行時点で自動的に
