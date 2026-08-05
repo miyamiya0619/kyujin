@@ -4,10 +4,15 @@
     都道府県を変更すると Ajax で市区町村の選択肢を更新する
     (`x-prefecture-city-select-script`)。フォーム自体の送信は
     「この条件で探す」ボタンを押したときだけ行う。
---}}
-@props(['prefectures', 'cities', 'facilityTypes' => null, 'jobCategories' => null, 'employmentTypes' => null, 'jobFeatures' => null, 'compact' => false])
 
-<form method="GET" action="{{ route('public.jobs.index') }}" class="card p-4">
+    $emphasis はトップページ用。検索がそのページの主目的になるので、
+    枠を目立たせて送信ボタンをアクセント色(--sun)にする。
+--}}
+@props(['prefectures', 'cities', 'facilityTypes' => null, 'jobCategories' => null, 'employmentTypes' => null, 'jobFeatures' => null, 'compact' => false, 'emphasis' => false])
+
+<form method="GET" action="{{ route('public.jobs.index') }}"
+      class="card p-4 @if ($emphasis) p-5 shadow-sm @endif"
+      @if ($emphasis) style="border-color: var(--accent-line)" @endif>
     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div>
             <label for="prefecture_id" class="block text-xs text-[var(--muted)]">都道府県</label>
@@ -117,7 +122,7 @@
         @endif
     @endunless
 
-    <button type="submit" class="btn-primary mt-4">
+    <button type="submit" class="{{ $emphasis ? 'btn-sun' : 'btn-primary' }} mt-4 @if ($emphasis) w-full sm:w-auto sm:px-12 @endif">
         この条件で探す
     </button>
 </form>

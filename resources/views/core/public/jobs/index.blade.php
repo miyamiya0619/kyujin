@@ -4,7 +4,7 @@
 @section('meta_description', "介護・医療・福祉の求人を都道府県・職種・雇用形態から検索できます。{$site->site_name}の求人一覧です。")
 
 @section('content')
-    <section class="mx-auto max-w-5xl px-4 py-8">
+    <section class="mx-auto max-w-6xl px-4 py-8">
         <h1 class="text-xl font-bold">求人を探す</h1>
 
         <div class="mt-4">

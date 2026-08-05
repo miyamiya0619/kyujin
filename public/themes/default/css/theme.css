@@ -33,6 +33,29 @@
     --danger-bg: #FBE7E1;
     --info: #3B6E8F;
     --info-bg: #E4EEF3;
+
+    /*
+     * 公開サイト(特にトップページ)の暖色アクセント。
+     *
+     * 介護の求人メディアは「堅い・不安」より「相談しやすい・温かい」印象が
+     * 応募につながるため、公開面だけ暖色を差す。ブランド色(--theme-color)は
+     * 顧客が設定から変えられる値なので置き換えず、併用する前提で選んでいる。
+     * 管理画面はこのトークンを使わない(業務画面に装飾を持ち込まない)。
+     *
+     * --accent は面(塗り)用、--accent-strong は文字用。
+     * 白背景に対して --accent は 3:1 前後しかないため、文字色には使わないこと。
+     */
+    --accent: #E8873F;
+    --accent-strong: #B25714;
+    --accent-tint: #FDF2E7;
+    --accent-line: #F2D3B4;
+
+    --coral: #D9536F;
+    --coral-tint: #FCEDF0;
+
+    --sun: #E9A227;
+
+    --cream: #FFFAF3;
 }
 
 html {
@@ -111,6 +134,246 @@ body {
     background-color: var(--brand-tint);
     color: var(--theme-color, var(--theme-color-fallback));
     font-weight: 500;
+}
+
+/* ---- 公開サイト(トップページ)---- */
+
+/* ボタンの派生。基本形の余白・角丸は .btn-primary と共有する(上のセレクタ群)。 */
+.btn-coral,
+.btn-sun,
+.btn-outline-brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border-radius: 8px;
+    padding: 0.65rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    border: 1px solid transparent;
+    transition: filter 0.15s, background-color 0.15s, border-color 0.15s;
+}
+
+.btn-coral {
+    background-color: var(--coral);
+    color: #fff;
+}
+.btn-coral:hover {
+    filter: brightness(0.94);
+}
+
+/* 検索実行。参考にした求人メディア同様、ページ内で最も目立つ色を割り当てる。 */
+.btn-sun {
+    background-color: var(--sun);
+    color: #3B2A08;
+}
+.btn-sun:hover {
+    filter: brightness(0.95);
+}
+
+.btn-outline-brand {
+    background-color: var(--surface);
+    border-color: var(--theme-color, var(--theme-color-fallback));
+    color: var(--theme-color, var(--theme-color-fallback));
+}
+.btn-outline-brand:hover {
+    background-color: var(--brand-tint);
+}
+
+/*
+ * ボタンの小サイズ。ヘッダーなど余白の限られる場所で使う。
+ *
+ * ⚠ Tailwind の `px-4` などのユーティリティでは上書きできない。
+ *   このファイルはレイヤー無しの CSS で、レイヤー無しは常に
+ *   @layer utilities より優先されるため(冒頭の注記と同じ理由)。
+ *   サイズ違いはユーティリティではなくこのクラスで指定すること。
+ */
+.btn-sm {
+    padding: 0.45rem 1.05rem;
+    font-size: 0.8125rem;
+}
+
+.hero-warm {
+    background:
+        radial-gradient(680px 380px at 88% -20%, var(--coral-tint), transparent 62%),
+        radial-gradient(760px 460px at 8% 0%, var(--accent-tint), transparent 66%),
+        var(--cream);
+}
+
+/* 掲載件数バッジ。数字を主役にするので字面を大きく取る。 */
+.count-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    background-color: var(--surface);
+    border: 1px solid var(--accent-line);
+    color: var(--accent-strong);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.count-badge .count-badge-num {
+    font-size: 1.25rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+
+/* 特集タイル(夜勤あり・雇用形態など、件数の多い入口)。 */
+.tile {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    padding: 1.1rem 1.25rem;
+    border-radius: 12px;
+    border: 1px solid var(--accent-line);
+    background: linear-gradient(105deg, var(--accent-tint), var(--surface) 72%);
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(178, 87, 20, 0.12);
+}
+.tile .tile-label {
+    font-weight: 700;
+    color: var(--ink);
+}
+.tile .tile-count {
+    margin-top: 0.3rem;
+    font-size: 0.8125rem;
+    color: var(--accent-strong);
+    font-variant-numeric: tabular-nums;
+}
+
+/* 条件チップ(こだわり条件・資格などの一覧リンク)。 */
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background-color: var(--surface);
+    color: var(--ink-soft);
+    font-size: 0.8125rem;
+    text-decoration: none;
+    transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+}
+.chip:hover {
+    border-color: var(--accent);
+    background-color: var(--accent-tint);
+    color: var(--accent-strong);
+}
+.chip .chip-count {
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+}
+.chip:hover .chip-count {
+    color: var(--accent-strong);
+}
+
+/* 「◯◯から探す」のリンク行。件数を右端で揃える。 */
+.browse-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0.25rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-soft);
+    font-size: 0.875rem;
+    text-decoration: none;
+}
+.browse-link:hover {
+    color: var(--accent-strong);
+}
+.browse-link .browse-count {
+    flex-shrink: 0;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* 地方ごとのアコーディオン。JS を使わず <details> で開閉する
+   (本番のビルド環境に依存しないため。中身は閉じていても DOM にあるので
+   クローラからも読める)。 */
+.acc {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background-color: var(--surface);
+    overflow: hidden;
+}
+.acc + .acc {
+    margin-top: 0.5rem;
+}
+.acc > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1.1rem;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    list-style: none;
+}
+.acc > summary::-webkit-details-marker {
+    display: none;
+}
+.acc > summary::after {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    flex-shrink: 0;
+    border-right: 2px solid var(--muted);
+    border-bottom: 2px solid var(--muted);
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform 0.15s;
+}
+.acc[open] > summary::after {
+    transform: rotate(-135deg) translate(-2px, -2px);
+}
+.acc > summary:hover {
+    background-color: var(--accent-tint);
+}
+.acc .acc-body {
+    padding: 0.25rem 1.1rem 1rem;
+    border-top: 1px solid var(--border);
+}
+
+/* ご利用の流れ。番号を丸で置く。 */
+.step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background-color: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.section-cream {
+    background-color: var(--cream);
+    border-top: 1px solid var(--accent-line);
+    border-bottom: 1px solid var(--accent-line);
+}
+
+/* セクション見出し。小さなラベル + 見出しの 2 段組み。 */
+.section-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--accent-strong);
 }
 
 /* ---- 管理画面(運営者・掲載企業)のシェル ---- */
