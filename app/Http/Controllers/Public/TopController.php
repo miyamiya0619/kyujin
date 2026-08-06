@@ -10,7 +10,10 @@ use App\Models\JobFeature;
 use App\Models\JobPosting;
 use App\Models\Prefecture;
 use App\Models\Qualification;
+use App\Models\SiteSetting;
+use App\Services\ImageUploadService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 /**
@@ -33,7 +36,23 @@ class TopController extends Controller
         $employmentTypes = EmploymentType::selectable()->get();
         $employmentTypeCounts = $this->countByOwnColumn('employment_type_id');
 
+        $lastPublishedAt = JobPosting::published()->max('published_at');
+
         return view('public.top', [
+            /*
+             * ファーストビューの画像。顧客がサイト設定でキービジュアルを
+             * 用意していればそれを使い、無ければテーマ同梱の既定画像に落とす。
+             * theme_asset() はテーマ → 標準テーマの順に解決するので、
+             * 顧客テーマが独自の hero を持っていればそちらが優先される。
+             */
+            'heroImageUrl' => SiteSetting::current()->key_visual_path
+                ? ImageUploadService::url(SiteSetting::current()->key_visual_path)
+                : theme_asset('images/hero.svg'),
+
+            // 「最終更新」は今日の日付ではなく、実際に最後に公開された求人の日時を出す。
+            // 常に本日を出すと、更新が止まっていても更新されているように見えてしまう。
+            'lastPublishedAt' => $lastPublishedAt ? Carbon::parse($lastPublishedAt) : null,
+
             'featuredJobPostings' => (clone $baseQuery)->where('is_featured', true)->limit(6)->get(),
             'newJobPostings' => (clone $baseQuery)->orderByDesc('published_at')->limit(8)->get(),
             'totalJobPostingCount' => JobPosting::published()->count(),

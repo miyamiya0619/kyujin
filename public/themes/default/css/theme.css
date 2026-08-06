@@ -201,6 +201,60 @@ body {
         var(--cream);
 }
 
+/*
+ * ファーストビューのキービジュアル。
+ *
+ * 画面幅いっぱいまで絵を出しつつ、左端を背景色へ溶かして見出しの可読性を保つ。
+ * 幅の狭い端末では絵の上に文字を重ねると両方が潰れるので、この敷き込みは
+ * lg 以上でだけ有効にし、それ未満ではビュー側で <img> を縦に積む。
+ */
+.hero-figure {
+    display: none;
+}
+
+@media (min-width: 1024px) {
+    .hero-warm {
+        min-height: 480px;
+    }
+
+    .hero-figure {
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 54%;
+        background-repeat: no-repeat;
+        background-position: center bottom;
+        background-size: cover;
+    }
+
+    /* 左からのフェード。--cream は .hero-warm の下地と同じ色。 */
+    .hero-figure::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            90deg,
+            var(--cream) 0%,
+            rgba(255, 250, 243, 0.72) 22%,
+            rgba(255, 250, 243, 0) 54%
+        );
+    }
+}
+
+/* 掲載状況ストリップの件数バッジ。 */
+.stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.75rem;
+    border-radius: 999px;
+    background-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+}
+
 /* 掲載件数バッジ。数字を主役にするので字面を大きく取る。 */
 .count-badge {
     display: inline-flex;

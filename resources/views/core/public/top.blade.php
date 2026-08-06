@@ -5,16 +5,23 @@
 
 @section('content')
     {{-- ============================ ヒーロー ============================ --}}
-    <section class="hero-warm">
-        <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 lg:grid-cols-[1.05fr_.95fr] lg:py-20">
-            <div>
+    <section class="hero-warm relative overflow-hidden">
+        {{-- lg 以上ではキービジュアルを右側に敷き、左端を背景へ溶かして文字を読ませる --}}
+        <div class="hero-figure" style="background-image: url('{{ $heroImageUrl }}')" aria-hidden="true"></div>
+
+        <div class="relative mx-auto max-w-6xl px-4 py-12 lg:py-20">
+            <div class="lg:max-w-[34rem]">
                 <span class="count-badge">
                     掲載中の求人
                     <span class="count-badge-num">{{ number_format($totalJobPostingCount) }}</span>
                     件
                 </span>
 
-                <h1 class="font-display mt-5 text-3xl leading-snug font-semibold sm:text-4xl lg:text-[2.6rem]">
+                {{--
+                    キャッチコピーは顧客が自由に設定できるので長さが読めない。
+                    text-balance で行長を均し、最終行に 1 文字だけ残るのを防ぐ。
+                --}}
+                <h1 class="font-display mt-5 text-3xl leading-snug font-semibold text-balance sm:text-4xl lg:text-[2.35rem]">
                     {{ $site->catch_copy ?: '介護・医療・福祉のお仕事を探す' }}
                 </h1>
 
@@ -42,46 +49,30 @@
                 </ul>
             </div>
 
-            {{-- キービジュアルが未設定でも空白にならないよう、掲載状況の実数を出す --}}
-            <div>
-                @if ($site->key_visual_path)
-                    <img src="{{ \App\Services\ImageUploadService::url($site->key_visual_path) }}"
-                         alt="{{ $site->site_name }}"
-                         class="w-full rounded-xl object-cover shadow-sm"
-                         style="border: 1px solid var(--accent-line)">
-                @else
-                    <div class="card p-6" style="border-color: var(--accent-line)">
-                        <p class="section-eyebrow">いまの掲載状況</p>
-
-                        <dl class="mt-4 grid grid-cols-3 gap-3 text-center">
-                            <div class="rounded-lg py-4" style="background-color: var(--accent-tint)">
-                                <dt class="text-xs" style="color: var(--ink-soft)">公開中の求人</dt>
-                                <dd class="mt-1 text-2xl font-bold tabular-nums" style="color: var(--accent-strong)">
-                                    {{ number_format($totalJobPostingCount) }}
-                                </dd>
-                            </div>
-                            <div class="rounded-lg py-4" style="background-color: var(--brand-tint)">
-                                <dt class="text-xs" style="color: var(--ink-soft)">募集エリア</dt>
-                                <dd class="mt-1 text-2xl font-bold tabular-nums" style="color: var(--theme-color)">
-                                    {{ number_format($prefectureCounts->count()) }}
-                                </dd>
-                            </div>
-                            <div class="rounded-lg py-4" style="background-color: var(--coral-tint)">
-                                <dt class="text-xs" style="color: var(--ink-soft)">夜勤あり</dt>
-                                <dd class="mt-1 text-2xl font-bold tabular-nums" style="color: var(--coral)">
-                                    {{ number_format($nightShiftCount) }}
-                                </dd>
-                            </div>
-                        </dl>
-
-                        <p class="mt-4 text-xs" style="color: var(--muted)">
-                            掲載企業から直接届く求人のみを掲載しています。
-                        </p>
-                    </div>
-                @endif
-            </div>
+            {{-- lg 未満では敷かずに流し込む(縦に積んだほうが文字も絵も潰れない) --}}
+            <img src="{{ $heroImageUrl }}" alt=""
+                 class="mt-9 w-full rounded-xl lg:hidden"
+                 style="border: 1px solid var(--accent-line)">
         </div>
     </section>
+
+    {{-- ========================= 掲載状況ストリップ ========================= --}}
+    <div class="border-y" style="border-color: var(--accent-line); background-color: var(--surface)">
+        <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-2 px-4 py-2.5 text-[13px]"
+             style="color: var(--ink-soft)">
+            <span class="stat-pill">
+                公開中の求人 <strong class="tabular-nums">{{ number_format($totalJobPostingCount) }}</strong> 件
+            </span>
+            <span>募集エリア <strong class="tabular-nums">{{ number_format($prefectureCounts->count()) }}</strong> 都道府県</span>
+            <span>夜勤あり <strong class="tabular-nums">{{ number_format($nightShiftCount) }}</strong> 件</span>
+
+            @if ($lastPublishedAt)
+                <span class="sm:ml-auto" style="color: var(--muted)">
+                    最終更新 {{ $lastPublishedAt->format('Y年n月j日') }}
+                </span>
+            @endif
+        </div>
+    </div>
 
     {{-- ======================= 条件から探す(検索) ======================= --}}
     <section class="mx-auto max-w-6xl px-4 py-10">
