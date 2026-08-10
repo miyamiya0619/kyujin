@@ -83,6 +83,24 @@ body {
     }
 }
 
+/*
+ * クリック可能な要素は必ずポインターカーソルにする。
+ * ブラウザ既定のスタイルシートでは button 系要素が cursor: default のままになる
+ * ことがあり(特に Firefox)、見た目上クリックできると分かりにくくなるため。
+ */
+button:not(:disabled),
+input[type="submit"]:not(:disabled),
+input[type="button"]:not(:disabled),
+input[type="reset"]:not(:disabled),
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+label[for],
+select,
+summary,
+[role="button"] {
+    cursor: pointer;
+}
+
 /* ---- 共通コンポーネント ---- */
 
 .btn-primary,

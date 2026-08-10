@@ -201,7 +201,7 @@
         <p class="section-eyebrow">SEARCH</p>
         <h2 class="font-display mt-1 text-xl font-semibold">条件を選んで探す</h2>
 
-        <div class="mt-5 grid gap-3 lg:grid-cols-2">
+        <div class="mt-5">
             @if ($jobCategories->isNotEmpty())
                 <details class="acc" open>
                     <summary>職種から探す</summary>
@@ -220,7 +220,7 @@
             @endif
 
             @if ($facilityTypes->isNotEmpty())
-                <details class="acc" open>
+                <details class="acc">
                     <summary>施設形態から探す</summary>
                     <div class="acc-body">
                         <div class="grid gap-x-6 sm:grid-cols-2">
