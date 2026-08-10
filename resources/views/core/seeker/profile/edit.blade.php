@@ -1,12 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.seeker')
 
 @section('title', 'プロフィール編集')
 
-@section('content')
-    <section class="mx-auto max-w-2xl px-4 py-12">
-        <a href="{{ route('seeker.mypage') }}" class="text-sm text-[var(--ink-soft)] hover:underline">&laquo; マイページ</a>
-
-        <h1 class="mt-1 text-xl font-bold">プロフィール編集</h1>
+@section('seeker-content')
+        <h1 class="text-xl font-bold">プロフィール編集</h1>
 
         <form method="POST" action="{{ route('seeker.profile.update') }}"
               class="mt-6 rounded border border-[var(--border)] bg-[var(--surface)] p-6">
@@ -120,5 +117,4 @@
                 </form>
             </details>
         </div>
-    </section>
 @endsection
