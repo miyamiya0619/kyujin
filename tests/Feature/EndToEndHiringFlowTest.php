@@ -74,6 +74,13 @@ class EndToEndHiringFlowTest extends TestCase
 
         $this->assertSame(JobPosting::STATUS_PENDING, $jobPosting->fresh()->status);
 
+        // 提出直後のリダイレクト先で完了メッセージが見える(セッションの flash は
+        // 次の1リクエストだけ有効なので、ここで見ておかないと後続の公開サイトへの
+        // アクセスで意図せず表示されてしまう)。
+        $this->actingAs($companyUser, 'company')
+            ->get(route('company.job-postings.index'))
+            ->assertSee('を審査に提出しました');
+
         // 審査待ちの間は公開サイトに出てはいけない(CLAUDE.md 3.5)。
         $this->get(route('public.jobs.index'))->assertDontSee('E2Eテスト求人・介護職員');
 

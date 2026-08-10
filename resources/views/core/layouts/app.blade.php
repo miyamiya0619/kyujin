@@ -49,6 +49,24 @@
     @include('layouts.header')
 
     <main class="flex-1">
+        @if (session('status') || session('error'))
+            <div class="mx-auto max-w-6xl px-4 pt-4">
+                @if (session('status'))
+                    <div class="rounded border px-4 py-3 text-sm"
+                         style="border-color: var(--success); background-color: var(--success-bg); color: var(--success)">
+                        {{ session('status') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="rounded border px-4 py-3 text-sm"
+                         style="border-color: var(--danger); background-color: var(--danger-bg); color: var(--danger)">
+                        {{ session('error') }}
+                    </div>
+                @endif
+            </div>
+        @endif
+
         @yield('content')
     </main>
 

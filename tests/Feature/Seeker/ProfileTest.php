@@ -22,6 +22,11 @@ class ProfileTest extends TestCase
             ->assertRedirect(route('seeker.profile.edit'));
 
         $this->assertSame('編集後', $jobSeeker->fresh()->name);
+
+        // リダイレクト先で更新完了のメッセージが実際に画面に見えることを確認する。
+        $this->actingAs($jobSeeker, 'seeker')
+            ->get(route('seeker.profile.edit'))
+            ->assertSee('プロフィールを更新しました。');
     }
 
     public function test_保有資格を複数選択して保存できる(): void
