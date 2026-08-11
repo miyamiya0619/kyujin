@@ -11,6 +11,7 @@ use App\Http\Controllers\Seeker\AccountController;
 use App\Http\Controllers\Seeker\Auth\LoginController;
 use App\Http\Controllers\Seeker\Auth\PasswordResetController;
 use App\Http\Controllers\Seeker\Auth\RegisterController;
+use App\Http\Controllers\Seeker\Auth\VerificationController;
 use App\Http\Controllers\Seeker\ExperienceController;
 use App\Http\Controllers\Seeker\MyPageController;
 use App\Http\Controllers\Seeker\ProfileController;
@@ -74,16 +75,31 @@ Route::name('seeker.')->group(function () {
     Route::middleware('auth:seeker')->group(function () {
         Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
 
-        Route::get('mypage', MyPageController::class)->name('mypage');
+        // メール認証(T-27)。ログイン後・認証前でも開けるよう auth:seeker のみに置く
+        // (verified を付けると、この画面自体に入れなくなる)。
+        Route::get('email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
+        Route::get('email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
+            ->middleware(['signed', 'throttle:6,1'])
+            ->name('verification.verify');
+        Route::post('email/verification-notification', [VerificationController::class, 'send'])
+            ->middleware('throttle:6,1')
+            ->name('verification.send');
 
-        Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+        // メール認証が済むまで通さない。応募(public.jobs.apply.store)はこの
+        // グループの外にあるため対象外(未認証でも応募自体は完了する)。
+        Route::middleware('verified:seeker.verification.notice')->group(function () {
+            Route::get('mypage', MyPageController::class)->name('mypage');
 
-        Route::post('experiences', [ExperienceController::class, 'store'])->name('experiences.store');
-        Route::put('experiences/{experience}', [ExperienceController::class, 'update'])->name('experiences.update');
-        Route::delete('experiences/{experience}', [ExperienceController::class, 'destroy'])->name('experiences.destroy');
-        Route::post('experiences/reorder', [ExperienceController::class, 'reorder'])->name('experiences.reorder');
+            Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+            Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 
+            Route::post('experiences', [ExperienceController::class, 'store'])->name('experiences.store');
+            Route::put('experiences/{experience}', [ExperienceController::class, 'update'])->name('experiences.update');
+            Route::delete('experiences/{experience}', [ExperienceController::class, 'destroy'])->name('experiences.destroy');
+            Route::post('experiences/reorder', [ExperienceController::class, 'reorder'])->name('experiences.reorder');
+        });
+
+        // 退会は未認証でもできるようにする(閉じ込めない)。
         Route::delete('account', [AccountController::class, 'destroy'])->name('account.destroy');
     });
 });

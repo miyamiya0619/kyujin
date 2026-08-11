@@ -55,6 +55,11 @@ class ApplicationController extends Controller
 
             Auth::guard('seeker')->login($jobSeeker);
             $request->session()->regenerate();
+
+            // 応募自体はメール認証を待たずに完了させる(このメソッドの下で作成する)。
+            // 確認メールは送るが、マイページ等へのアクセスは verified ミドルウェアで
+            // 別途止まる(routes/web.php 参照)。
+            $jobSeeker->sendEmailVerificationNotification();
         }
 
         $service->create(

@@ -12,6 +12,7 @@ use App\Models\JobPosting;
 use App\Models\JobSeeker;
 use App\Models\Prefecture;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 /**
@@ -113,8 +114,19 @@ class EndToEndHiringFlowTest extends TestCase
 
         $seeker = JobSeeker::query()->where('email', 'e2e-seeker@example.com')->firstOrFail();
 
+        // 応募自体はメール認証を待たずに完了する(T-27)。
         $this->actingAs($seeker, 'seeker')
             ->post(route('public.jobs.apply.store', $jobPosting), ['message' => 'ぜひ応募させてください。'])
+            ->assertRedirect(route('seeker.mypage'));
+
+        // ---- 求職者: メール内のリンクを開いて認証する ----
+        $verificationUrl = URL::temporarySignedRoute('seeker.verification.verify', now()->addHours(24), [
+            'id' => $seeker->id,
+            'hash' => sha1($seeker->email),
+        ]);
+
+        $this->actingAs($seeker, 'seeker')
+            ->get($verificationUrl)
             ->assertRedirect(route('seeker.mypage'));
 
         // ---- 掲載企業: 応募者一覧に見える ----

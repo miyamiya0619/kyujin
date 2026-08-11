@@ -36,6 +36,9 @@ class RegisterController extends Controller
         Auth::guard('seeker')->login($jobSeeker);
         $request->session()->regenerate();
 
-        return redirect()->route('seeker.mypage')->with('status', '会員登録が完了しました。');
+        $jobSeeker->sendEmailVerificationNotification();
+
+        return redirect()->route('seeker.mypage')
+            ->with('status', '会員登録が完了しました。確認メールを送信しましたので、メールアドレスの確認をお願いします。');
     }
 }
