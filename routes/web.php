@@ -100,6 +100,7 @@ Route::name('seeker.')->group(function () {
         });
 
         // 退会は未認証でもできるようにする(閉じ込めない)。
+        Route::get('account/withdraw', [AccountController::class, 'confirm'])->name('account.confirm');
         Route::delete('account', [AccountController::class, 'destroy'])->name('account.destroy');
     });
 });

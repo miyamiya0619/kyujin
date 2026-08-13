@@ -33,12 +33,7 @@
                         @csrf
                         <button type="submit">ログアウト</button>
                     </form>
-                    <form method="POST" action="{{ route('seeker.account.destroy') }}"
-                          onsubmit="return confirm('退会するとプロフィール・保有資格・職務経歴が削除されます。よろしいですか?(応募済みの求人については、応募時点の内容が選考記録として掲載企業側に残ります)')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="is-danger">退会する</button>
-                    </form>
+                    <a href="{{ route('seeker.account.confirm') }}" class="is-danger">退会する</a>
                 </div>
             </aside>
 

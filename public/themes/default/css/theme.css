@@ -105,7 +105,8 @@ summary,
 
 .btn-primary,
 .btn-brand,
-.btn-ghost {
+.btn-ghost,
+.btn-danger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -135,6 +136,18 @@ summary,
 .btn-ghost:hover {
     border-color: var(--muted);
     color: var(--ink);
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    color: #fff;
+}
+.btn-danger:hover {
+    filter: brightness(0.92);
+}
+.btn-danger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .card {
@@ -682,7 +695,8 @@ summary,
     gap: 2px;
 }
 
-.seeker-side .seeker-account button {
+.seeker-side .seeker-account button,
+.seeker-side .seeker-account a {
     display: block;
     width: 100%;
     background: none;
@@ -692,14 +706,17 @@ summary,
     font-size: 13px;
     color: var(--ink-soft);
     text-align: left;
+    text-decoration: none;
     cursor: pointer;
 }
 
-.seeker-side .seeker-account button:hover {
+.seeker-side .seeker-account button:hover,
+.seeker-side .seeker-account a:hover {
     background-color: rgba(0, 0, 0, 0.04);
 }
 
-.seeker-side .seeker-account button.is-danger {
+.seeker-side .seeker-account button.is-danger,
+.seeker-side .seeker-account a.is-danger {
     color: var(--danger);
     font-size: 12px;
 }

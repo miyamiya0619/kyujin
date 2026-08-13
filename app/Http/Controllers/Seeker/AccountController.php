@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Seeker;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\AccountDeletedNotification;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +19,11 @@ use Illuminate\Support\Facades\Auth;
  */
 class AccountController extends Controller
 {
+    public function confirm(): View
+    {
+        return view('seeker.account.withdraw');
+    }
+
     public function destroy(Request $request): RedirectResponse
     {
         $jobSeeker = auth('seeker')->user();
@@ -24,6 +31,7 @@ class AccountController extends Controller
         Auth::guard('seeker')->logout();
 
         $jobSeeker->delete();
+        $jobSeeker->notify(new AccountDeletedNotification($jobSeeker->name));
 
         $request->session()->regenerate();
 

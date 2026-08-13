@@ -7,12 +7,38 @@ use App\Models\ApplicationResumeSnapshot;
 use App\Models\JobPosting;
 use App\Models\JobSeeker;
 use App\Models\Qualification;
+use App\Notifications\AccountDeletedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class AccountDeletionTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_退会確認画面が表示される(): void
+    {
+        $jobSeeker = JobSeeker::factory()->create(['email' => 'taiin@example.com']);
+
+        $this->actingAs($jobSeeker, 'seeker')
+            ->get(route('seeker.account.confirm'))
+            ->assertOk()
+            ->assertSee('taiin@example.com');
+    }
+
+    public function test_未認証でも退会確認画面に入れる(): void
+    {
+        $jobSeeker = JobSeeker::factory()->unverified()->create();
+
+        $this->actingAs($jobSeeker, 'seeker')
+            ->get(route('seeker.account.confirm'))
+            ->assertOk();
+    }
+
+    public function test_未ログインでは退会確認画面に入れない(): void
+    {
+        $this->get(route('seeker.account.confirm'))->assertRedirect(route('seeker.login'));
+    }
 
     public function test_退会するとアカウントが削除されログアウトする(): void
     {
@@ -24,6 +50,17 @@ class AccountDeletionTest extends TestCase
 
         $this->assertModelMissing($jobSeeker);
         $this->assertGuest('seeker');
+    }
+
+    public function test_退会すると完了メールが送信される(): void
+    {
+        Notification::fake();
+
+        $jobSeeker = JobSeeker::factory()->create();
+
+        $this->actingAs($jobSeeker, 'seeker')->delete(route('seeker.account.destroy'));
+
+        Notification::assertSentTo($jobSeeker, AccountDeletedNotification::class);
     }
 
     public function test_退会すると保有資格と職務経歴も一緒に削除される(): void
