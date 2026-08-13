@@ -9,7 +9,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <section class="mx-auto max-w-5xl px-4 py-10">
+    <section class="mx-auto px-4 py-10">
         <div class="seeker-shell">
             <aside class="seeker-side">
                 <div class="seeker-who">
